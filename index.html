@@ -10,20 +10,14 @@
         body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
         .container { padding: 20px; max-width: 450px; margin: auto; }
         .card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 20px; }
-        
-        h2 { color: var(--accent); text-align: center; font-size: 18px; font-weight: 400; text-transform: uppercase; margin-top: 0; letter-spacing: 1px; }
-        input { width: 100%; padding: 15px; margin: 10px 0 10px 0; border: 1px solid var(--pink); border-radius: 12px; outline: none; box-sizing: border-box; font-size: 16px; }
-        
-        /* Прайс-лист */
-        .price-item { display: flex; justify-content: space-between; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px dashed var(--pink); font-size: 14px; }
-        .price-item b { color: var(--accent); }
-
+        h2 { color: var(--accent); text-align: center; font-size: 16px; text-transform: uppercase; margin-top: 0; letter-spacing: 1px; }
+        input { width: 100%; padding: 15px; margin: 10px 0; border: 1px solid var(--pink); border-radius: 12px; outline: none; box-sizing: border-box; font-size: 16px; }
+        .price-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; border-bottom: 1px dashed var(--pink); padding-bottom: 4px; }
         .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; }
         .day { padding: 10px 0; border-radius: 10px; cursor: pointer; font-size: 14px; }
         .day.disabled { opacity: 0.15; cursor: not-allowed; }
         .day.selected { background: var(--accent) !important; color: white; }
-        
         .time-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
         .time-slot { padding: 12px; border: 1px solid var(--pink); border-radius: 12px; text-align: center; font-size: 14px; cursor: pointer; }
         .time-slot.selected { background: var(--accent); color: white; }
@@ -32,20 +26,14 @@
 <body>
 <div class="container">
     <div class="card">
-        <h2>Прайс и услуги</h2>
-        <div class="price-item"><span>☁️ Комплекс «Эстетика»</span><b>1200₽</b></div>
-        <div class="price-item"><span>✨ Комплекс «Длина»</span><b>1700₽</b></div>
-        <div class="price-item"><span>🎨 Дизайн (1 ноготь)</span><b>от 100₽</b></div>
+        <h2>Прайс-лист</h2>
+        <div class="price-item"><span>☁️ Эстетика</span><b>1200₽</b></div>
+        <div class="price-item"><span>✨ Длина</span><b>1700₽</b></div>
         <div class="price-item"><span>🤍 Френч</span><b>300₽</b></div>
-        <div style="font-size: 10px; text-align: center; opacity: 0.5; margin-top: 10px;">*В каждый комплекс включен массаж рук</div>
     </div>
-
     <div class="card">
-        <h2>Ваше имя</h2>
-        <input type="text" id="userName" placeholder="Как к вам обращаться?" autocomplete="off">
-    </div>
-
-    <div class="card">
+        <h2>Запись</h2>
+        <input type="text" id="userName" placeholder="Ваше имя">
         <div class="cal-header">
             <button style="background:none; border:none; color:var(--accent); font-size:20px;" onclick="changeMonth(-1)">‹</button>
             <div id="monthDisplay" style="font-weight: 600;"></div>
@@ -53,17 +41,13 @@
         </div>
         <div class="calendar-grid" id="calendarGrid"></div>
     </div>
-
     <div id="timeSection" class="card" style="display: none;">
         <h2>Выберите время</h2>
         <div class="time-grid" id="timeGrid"></div>
     </div>
 </div>
-
 <script>
     const tg = window.Telegram.WebApp;
-    tg.expand();
-
     let selectedData = { name: '', date: '', time: '' };
     let currentMonth = new Date();
 
@@ -72,16 +56,12 @@
         const display = document.getElementById('monthDisplay');
         grid.innerHTML = '';
         display.innerText = currentMonth.toLocaleString('ru', { month: 'long', year: 'numeric' });
-
         const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
-        const today = new Date();
-        today.setHours(0,0,0,0);
-
+        const today = new Date(); today.setHours(0,0,0,0);
         for(let d = 1; d <= daysInMonth; d++) {
             const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), d);
             const el = document.createElement('div');
-            el.className = 'day';
-            el.innerText = d;
+            el.className = 'day'; el.innerText = d;
             if (date < today) el.classList.add('disabled');
             else el.onclick = () => {
                 document.querySelectorAll('.day').forEach(i => i.classList.remove('selected'));
@@ -97,36 +77,24 @@
     function renderTime() {
         const grid = document.getElementById('timeGrid');
         grid.innerHTML = '';
-        ["10:00", "12:00", "14:00", "16:00", "18:00"].forEach(t => {
+        // ГРАФИК: С 12:00 ДО 18:00
+        ["12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"].forEach(t => {
             const slot = document.createElement('div');
-            slot.className = 'time-slot';
-            slot.innerText = t;
+            slot.className = 'time-slot'; slot.innerText = t;
             slot.onclick = () => {
-                const nameInput = document.getElementById('userName').value.trim();
-                if (!nameInput) {
-                    alert("Пожалуйста, сначала введите ваше имя выше");
-                    return;
-                }
-                selectedData.name = nameInput;
-                selectedData.time = t;
+                const name = document.getElementById('userName').value.trim();
+                if (!name) return alert("Введите имя");
+                selectedData.name = name; selectedData.time = t;
                 document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
                 slot.classList.add('selected');
-                tg.MainButton.setText(`Записаться: ${t}`);
-                tg.MainButton.show();
+                tg.MainButton.setText(`Записаться на ${t}`).show();
             };
             grid.appendChild(slot);
         });
     }
 
-    function changeMonth(dir) {
-        currentMonth.setMonth(currentMonth.getMonth() + dir);
-        renderCalendar();
-    }
-
-    tg.MainButton.onClick(() => {
-        tg.sendData(JSON.stringify(selectedData));
-    });
-
+    function changeMonth(dir) { currentMonth.setMonth(currentMonth.getMonth() + dir); renderCalendar(); }
+    tg.MainButton.onClick(() => tg.sendData(JSON.stringify(selectedData)));
     renderCalendar();
 </script>
 </body>
