@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Anastasia Nails Studio</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root { --accent: #d4a373; --pink: #f4d3d9; --bg: #fffafb; --text: #4a4a4a; }
+        body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; -webkit-user-select: none; }
+        .container { padding: 20px; max-width: 450px; margin: auto; }
+        
+        /* Шапка календаря */
+        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .month-title { font-size: 18px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); }
+        .nav-btn { background: white; border: 1px solid var(--pink); border-radius: 50%; width: 35px; height: 35px; cursor: pointer; color: var(--accent); }
+
+        /* Сетка календаря */
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; text-align: center; }
+        .weekday { font-size: 11px; opacity: 0.5; font-weight: 600; padding-bottom: 10px; }
+        .day { padding: 12px 0; font-size: 15px; border-radius: 12px; cursor: pointer; transition: all 0.2s; position: relative; background: white; border: 1px solid transparent; }
+        .day.today { border-color: var(--pink); color: var(--accent); }
+        .day.disabled { opacity: 0.15; cursor: not-allowed; background: none; }
+        .day.selected { background: var(--accent) !important; color: white !important; transform: scale(1.05); }
+
+        /* Сетка времени */
+        .time-section { margin-top: 25px; animation: slideUp 0.4s ease; display: none; }
+        .time-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+        .time-slot { padding: 14px; background: white; border: 1px solid var(--pink); border-radius: 14px; text-align: center; font-size: 14px; cursor: pointer; transition: 0.2s; }
+        .time-slot.selected { background: var(--accent); color: white; border-color: var(--accent); }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="cal-header">
+        <button class="nav-btn" onclick="changeMonth(-1)">‹</button>
+        <div class="month-title" id="monthDisplay">Март 2024</div>
+        <button class="nav-btn" onclick="changeMonth(1)">›</button>
+    </div>
+
+    <div class="calendar-grid" id="calendarGrid">
+        <div class="weekday">ПН</div><div class="weekday">ВТ</div><div class="weekday">СР</div>
+        <div class="weekday">ЧТ</div><div class="weekday">ПТ</div><div class="weekday">СБ</div><div class="weekday">ВС</div>
+    </div>
+
+    <div id="timeSection" class="time-section">
+        <div style="text-align: center; font-size: 13px; text-transform: uppercase; color: var(--accent); letter-spacing: 1px;">Доступное время</div>
+        <div class="time-grid" id="timeGrid"></div>
+    </div>
+</div>
+
+<script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+
+    let currentMonth = new Date();
+    let selectedDate = null;
+    let selectedTime = null;
+
+    function renderCalendar() {
+        const grid = document.getElementById('calendarGrid');
+        const display = document.getElementById('monthDisplay');
+        const today = new Date();
+        today.setHours(0,0,0,0);
+
+        // Очистка старых дней (оставляем заголовки недель)
+        const weekdays = grid.querySelectorAll('.weekday');
+        grid.innerHTML = '';
+        weekdays.forEach(w => grid.appendChild(w));
+
+        display.innerText = currentMonth.toLocaleString('ru', { month: 'long', year: 'numeric' });
+
+        const firstDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).getDay();
+        const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
+        
+        // Коррекция ПН (в JS ВС = 0)
+        const offset = firstDay === 0 ? 6 : firstDay - 1;
+
+        for(let i = 0; i < offset; i++) grid.appendChild(document.createElement('div'));
+
+        for(let d = 1; d <= daysInMonth; d++) {
+            const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), d);
+            const el = document.createElement('div');
+            el.className = 'day';
+            el.innerText = d;
+
+            if (date < today) {
+                el.classList.add('disabled');
+            } else {
+                if (date.getTime() === today.getTime()) el.classList.add('today');
+                el.onclick = () => selectDay(d, el);
+            }
+            grid.appendChild(el);
+        }
+    }
+
+    function selectDay(day, el) {
+        document.querySelectorAll('.day').forEach(d => d.classList.remove('selected'));
+        el.classList.add('selected');
+        
+        const dateObj = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
+        // Формат YYYY-MM-DD для передачи в Python
+        selectedDate = dateObj.toISOString().split('T')[0];
+        
+        document.getElementById('timeSection').style.display = 'block';
+        renderTime();
+        tg.MainButton.hide();
+    }
+
+    function renderTime() {
+        const grid = document.getElementById('timeGrid');
+        grid.innerHTML = '';
+        ["12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"].forEach(t => {
+            const slot = document.createElement('div');
+            slot.className = 'time-slot';
+            slot.innerText = t;
+            slot.onclick = () => {
+                selectedTime = t;
+                document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+                slot.classList.add('selected');
+                tg.MainButton.setText(`Записаться на ${selectedDate} в ${t}`);
+                tg.MainButton.setParams({color: '#d4a373'}).show();
+            };
+            grid.appendChild(slot);
+        });
+    }
+
+    function changeMonth(dir) {
+        currentMonth.setMonth(currentMonth.getMonth() + dir);
+        renderCalendar();
+        document.getElementById('timeSection').style.display = 'none';
+        tg.MainButton.hide();
+    }
+
+    tg.MainButton.onClick(() => {
+        tg.sendData(JSON.stringify({ date: selectedDate, time: selectedTime }));
+    });
+
+    renderCalendar();
+</script>
+</body>
+</html>
