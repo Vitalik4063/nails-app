@@ -7,47 +7,55 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root { --accent: #d4a373; --pink: #f4d3d9; --bg: #fffafb; --text: #4a4a4a; }
-        body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; -webkit-user-select: none; }
+        body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
         .container { padding: 20px; max-width: 450px; margin: auto; }
         
-        /* Шапка календаря */
+        .page { display: none; animation: fadeIn 0.3s ease; }
+        .page.active { display: block; }
+
+        /* Регистрация */
+        .reg-form { text-align: center; margin-top: 50px; }
+        input { width: 100%; padding: 15px; margin: 10px 0; border: 1px solid var(--pink); border-radius: 12px; outline: none; box-sizing: border-box; }
+        .btn-reg { background: var(--accent); color: white; border: none; padding: 15px; width: 100%; border-radius: 12px; font-weight: 600; cursor: pointer; }
+
+        /* Календарь */
         .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .month-title { font-size: 18px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); }
-        .nav-btn { background: white; border: 1px solid var(--pink); border-radius: 50%; width: 35px; height: 35px; cursor: pointer; color: var(--accent); }
-
-        /* Сетка календаря */
+        .month-title { font-size: 18px; font-weight: 600; color: var(--accent); }
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; text-align: center; }
-        .weekday { font-size: 11px; opacity: 0.5; font-weight: 600; padding-bottom: 10px; }
-        .day { padding: 12px 0; font-size: 15px; border-radius: 12px; cursor: pointer; transition: all 0.2s; position: relative; background: white; border: 1px solid transparent; }
-        .day.today { border-color: var(--pink); color: var(--accent); }
-        .day.disabled { opacity: 0.15; cursor: not-allowed; background: none; }
-        .day.selected { background: var(--accent) !important; color: white !important; transform: scale(1.05); }
+        .day { padding: 12px 0; border-radius: 12px; cursor: pointer; background: white; }
+        .day.disabled { opacity: 0.15; cursor: not-allowed; }
+        .day.selected { background: var(--accent) !important; color: white; }
 
-        /* Сетка времени */
-        .time-section { margin-top: 25px; animation: slideUp 0.4s ease; display: none; }
         .time-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
-        .time-slot { padding: 14px; background: white; border: 1px solid var(--pink); border-radius: 14px; text-align: center; font-size: 14px; cursor: pointer; transition: 0.2s; }
-        .time-slot.selected { background: var(--accent); color: white; border-color: var(--accent); }
+        .time-slot { padding: 12px; background: white; border: 1px solid var(--pink); border-radius: 12px; text-align: center; cursor: pointer; }
+        .time-slot.selected { background: var(--accent); color: white; }
 
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 <div class="container">
-    <div class="cal-header">
-        <button class="nav-btn" onclick="changeMonth(-1)">‹</button>
-        <div class="month-title" id="monthDisplay">Март 2024</div>
-        <button class="nav-btn" onclick="changeMonth(1)">›</button>
+    <div id="regPage" class="page active">
+        <div class="reg-form">
+            <h2 style="color: var(--accent)">Регистрация</h2>
+            <p>Представьтесь, чтобы продолжить</p>
+            <input type="text" id="userName" placeholder="Ваше имя">
+            <p style="font-size: 12px; opacity: 0.6">Номер телефона будет запрошен автоматически при подтверждении записи</p>
+            <button class="btn-reg" onclick="goToBooking()">Далее</button>
+        </div>
     </div>
 
-    <div class="calendar-grid" id="calendarGrid">
-        <div class="weekday">ПН</div><div class="weekday">ВТ</div><div class="weekday">СР</div>
-        <div class="weekday">ЧТ</div><div class="weekday">ПТ</div><div class="weekday">СБ</div><div class="weekday">ВС</div>
-    </div>
-
-    <div id="timeSection" class="time-section">
-        <div style="text-align: center; font-size: 13px; text-transform: uppercase; color: var(--accent); letter-spacing: 1px;">Доступное время</div>
-        <div class="time-grid" id="timeGrid"></div>
+    <div id="bookingPage" class="page">
+        <div class="cal-header">
+            <button onclick="changeMonth(-1)">‹</button>
+            <div class="month-title" id="monthDisplay"></div>
+            <button onclick="changeMonth(1)">›</button>
+        </div>
+        <div class="calendar-grid" id="calendarGrid"></div>
+        
+        <div id="timeSection" style="margin-top: 20px; display: none;">
+            <div class="time-grid" id="timeGrid"></div>
+        </div>
     </div>
 </div>
 
@@ -55,73 +63,58 @@
     const tg = window.Telegram.WebApp;
     tg.expand();
 
+    let userData = { name: '', date: null, time: null };
     let currentMonth = new Date();
-    let selectedDate = null;
-    let selectedTime = null;
+
+    function goToBooking() {
+        const name = document.getElementById('userName').value;
+        if (name.length < 2) return alert("Введите имя");
+        userData.name = name;
+        document.getElementById('regPage').classList.remove('active');
+        document.getElementById('bookingPage').classList.add('active');
+        renderCalendar();
+    }
 
     function renderCalendar() {
         const grid = document.getElementById('calendarGrid');
         const display = document.getElementById('monthDisplay');
-        const today = new Date();
-        today.setHours(0,0,0,0);
-
-        // Очистка старых дней (оставляем заголовки недель)
-        const weekdays = grid.querySelectorAll('.weekday');
         grid.innerHTML = '';
-        weekdays.forEach(w => grid.appendChild(w));
-
         display.innerText = currentMonth.toLocaleString('ru', { month: 'long', year: 'numeric' });
 
-        const firstDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).getDay();
         const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
-        
-        // Коррекция ПН (в JS ВС = 0)
-        const offset = firstDay === 0 ? 6 : firstDay - 1;
-
-        for(let i = 0; i < offset; i++) grid.appendChild(document.createElement('div'));
+        const today = new Date();
+        today.setHours(0,0,0,0);
 
         for(let d = 1; d <= daysInMonth; d++) {
             const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), d);
             const el = document.createElement('div');
             el.className = 'day';
             el.innerText = d;
-
-            if (date < today) {
-                el.classList.add('disabled');
-            } else {
-                if (date.getTime() === today.getTime()) el.classList.add('today');
-                el.onclick = () => selectDay(d, el);
-            }
+            if (date < today) el.classList.add('disabled');
+            else el.onclick = () => {
+                document.querySelectorAll('.day').forEach(i => i.classList.remove('selected'));
+                el.classList.add('selected');
+                userData.date = date.toISOString().split('T')[0];
+                document.getElementById('timeSection').style.display = 'block';
+                renderTime();
+            };
             grid.appendChild(el);
         }
-    }
-
-    function selectDay(day, el) {
-        document.querySelectorAll('.day').forEach(d => d.classList.remove('selected'));
-        el.classList.add('selected');
-        
-        const dateObj = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
-        // Формат YYYY-MM-DD для передачи в Python
-        selectedDate = dateObj.toISOString().split('T')[0];
-        
-        document.getElementById('timeSection').style.display = 'block';
-        renderTime();
-        tg.MainButton.hide();
     }
 
     function renderTime() {
         const grid = document.getElementById('timeGrid');
         grid.innerHTML = '';
-        ["12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"].forEach(t => {
+        ["10:00", "12:00", "14:00", "16:00", "18:00"].forEach(t => {
             const slot = document.createElement('div');
             slot.className = 'time-slot';
             slot.innerText = t;
             slot.onclick = () => {
-                selectedTime = t;
+                userData.time = t;
                 document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
                 slot.classList.add('selected');
-                tg.MainButton.setText(`Записаться на ${selectedDate} в ${t}`);
-                tg.MainButton.setParams({color: '#d4a373'}).show();
+                tg.MainButton.setText(`Записаться на ${userData.date} в ${t}`);
+                tg.MainButton.show();
             };
             grid.appendChild(slot);
         });
@@ -130,15 +123,11 @@
     function changeMonth(dir) {
         currentMonth.setMonth(currentMonth.getMonth() + dir);
         renderCalendar();
-        document.getElementById('timeSection').style.display = 'none';
-        tg.MainButton.hide();
     }
 
     tg.MainButton.onClick(() => {
-        tg.sendData(JSON.stringify({ date: selectedDate, time: selectedTime }));
+        tg.sendData(JSON.stringify(userData));
     });
-
-    renderCalendar();
 </script>
 </body>
 </html>
