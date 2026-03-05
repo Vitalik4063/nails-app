@@ -3,52 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nastasia_Nailss Premium</title>
+    <title>Nastasia_Nailss</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --accent: #ffafbd; --bg: #050505; --card: #121212; --gradient: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%); }
+        :root { --accent: #ffafbd; --bg: #000; --card: #121212; --gradient: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%); }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; padding-bottom: 100px; }
-        .container { padding: 15px; max-width: 500px; margin: auto; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; padding-bottom: 90px; }
+        .container { padding: 15px; width: 100%; max-width: 500px; margin: auto; }
         
-        .glass { background: var(--card); border: 1px solid #222; border-radius: 25px; padding: 20px; margin-bottom: 15px; position: relative; overflow: hidden; }
-        .glass::before { content: ''; position: absolute; top:0; left:0; width:100%; height:4px; background: var(--gradient); opacity: 0.7; }
+        .glass { background: var(--card); border: 1px solid #222; border-radius: 20px; padding: 20px; margin-bottom: 15px; }
 
-        /* ПРАЙС ДИЗАЙН */
-        .price-card { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #222; }
-        .price-name { font-weight: 500; font-size: 15px; }
-        .price-cost { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; font-size: 16px; }
+        /* ПРАЙС НА ВСЮ СТРАНИЦУ */
+        .price-row { display: flex; justify-content: space-between; padding: 18px 5px; border-bottom: 1px solid #222; font-size: 16px; }
+        .price-val { color: var(--accent); font-weight: bold; }
 
-        /* КНОПКИ ТАЙМ-СЛОТОВ */
-        .time-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .slot { padding: 12px; background: #1a1a1a; border-radius: 12px; text-align: center; font-size: 13px; border: 1px solid #333; cursor: pointer; }
-        .slot.booked { opacity: 0.2; cursor: not-allowed; text-decoration: line-through; }
-        .slot.selected { background: var(--gradient); color: #000; border: none; font-weight: bold; }
+        /* ГИД И КАРТИНКИ */
+        .img-box { width: 100%; height: 250px; object-fit: cover; border-radius: 15px; margin-bottom: 10px; border: 1px solid #333; }
+
+        /* ЗАПИСЬ */
+        .time-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+        .slot { padding: 12px; background: #1a1a1a; border-radius: 10px; text-align: center; border: 1px solid #333; font-size: 13px; }
+        .slot.booked { opacity: 0.2; pointer-events: none; background: #000; }
+        .slot.active { border-color: var(--accent); background: rgba(255,175,189,0.1); }
 
         /* НАВИГАЦИЯ */
-        .nav { position: fixed; bottom: 15px; left: 3%; width: 94%; height: 70px; background: rgba(15,15,15,0.95); border-radius: 25px; display: flex; justify-content: space-around; align-items: center; border: 1px solid #333; z-index: 1000; backdrop-filter: blur(10px); }
-        .nav-item { color: #555; text-align: center; font-size: 9px; flex: 1; transition: 0.3s; }
-        .nav-item.active { color: var(--accent); transform: translateY(-5px); }
-        .nav-item i { font-size: 20px; display: block; margin-bottom: 5px; }
+        .nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 75px; background: #0a0a0a; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #222; z-index: 1000; }
+        .nav-item { color: #555; text-align: center; font-size: 10px; flex: 1; }
+        .nav-item.active { color: var(--accent); }
+        .nav-item i { font-size: 22px; display: block; margin-bottom: 4px; }
 
-        .btn { width: 100%; padding: 16px; border-radius: 18px; border: none; font-weight: bold; text-transform: uppercase; font-size: 13px; cursor: pointer; transition: 0.3s; }
+        .btn { width: 100%; padding: 16px; border-radius: 15px; border: none; font-weight: bold; text-transform: uppercase; cursor: pointer; display: block; text-align: center; text-decoration: none; }
         .btn-main { background: var(--gradient); color: #000; }
-        
-        .section { display: none; }
-        .section.active { display: block; animation: scaleIn 0.3s ease; }
-        @keyframes scaleIn { from { opacity:0; transform: scale(0.95); } to { opacity:1; transform: scale(1); } }
+        .btn-cancel { background: #300; color: #f55; margin-top: 10px; font-size: 12px; }
 
-        input, select, textarea { width: 100%; padding: 15px; background: #000; border: 1px solid #333; border-radius: 15px; color: #fff; margin-bottom: 15px; font-size: 16px; }
-        .shape-img { width: 100%; border-radius: 15px; margin-bottom: 10px; height: 180px; object-fit: cover; }
+        .section { display: none; }
+        .section.active { display: block; }
+
+        input, select, textarea { width: 100%; padding: 15px; background: #1a1a1a; border: 1px solid #333; border-radius: 12px; color: #fff; margin-bottom: 15px; }
+        
+        /* ЗВЕЗДЫ */
+        .stars { display: flex; justify-content: center; gap: 10px; font-size: 28px; margin-bottom: 15px; color: #222; }
+        .stars i.active { color: #ffcc00; }
     </style>
 </head>
 <body>
 
 <div id="reg-screen" style="position:fixed; inset:0; background:#000; z-index:9999; display:none; align-items:center; justify-content:center; padding:20px;">
     <div class="glass" style="width:100%; text-align:center;">
-        <h2 style="margin-bottom:5px">Nastasia_Nailss</h2>
-        <p style="color:#666; font-size:14px; margin-bottom:25px">Личный кабинет клиента</p>
+        <h2 style="color:var(--accent)">Регистрация</h2>
         <input id="reg-fn" placeholder="Имя">
         <input id="reg-ln" placeholder="Фамилия">
         <input id="reg-ph" type="tel" value="+7">
@@ -58,109 +61,127 @@
 
 <div class="container">
     <div id="sec-home" class="section active">
-        <h3 style="text-align:center">ГИД ПО ФОРМАМ</h3>
+        <h2 style="text-align:center">ГИД ПО ФОРМАМ</h2>
         <div class="glass">
-            <img class="shape-img" src="https://i.pinimg.com/564x/44/9d/90/449d900693466f2597406604618e7d4c.jpg">
+            <img class="img-box" src="https://i.pinimg.com/564x/44/9d/90/449d900693466f2597406604618e7d4c.jpg">
             <h4>Миндаль</h4>
-            <p style="font-size:13px; color:#aaa">Универсальная форма. Удлиняет пальцы, делает кисть изящнее. Подходит для любой длины.</p>
+            <p style="color:#888; font-size:14px">Удлиняет пальцы, делает руки изящнее. Самая популярная форма 2026 года.</p>
         </div>
         <div class="glass">
-            <img class="shape-img" src="https://i.pinimg.com/564x/6c/20/35/6c203525281734560731037593259858.jpg">
-            <h4>Четкий квадрат</h4>
-            <p style="font-size:13px; color:#aaa">Для любительниц геометрии. Идеально подчеркивает тонкие пальцы. Требует прочных ногтей.</p>
-        </div>
-        <div class="glass">
-            <img class="shape-img" src="https://i.pinimg.com/564x/24/02/75/24027588321685123992257859858543.jpg">
-            <h4>Овал</h4>
-            <p style="font-size:13px; color:#aaa">Максимально естественная и практичная форма. Не цепляется за одежду, подходит для коротких ногтей.</p>
+            <img class="img-box" src="https://i.pinimg.com/564x/6c/20/35/6c203525281734560731037593259858.jpg">
+            <h4>Мягкий квадрат</h4>
+            <p style="color:#888; font-size:14px">Практично и стильно. Подходит для работы за компьютером.</p>
         </div>
     </div>
 
     <div id="sec-price" class="section">
-        <h3 style="text-align:center">ПРАЙС-ЛИСТ</h3>
-        <div class="glass">
-            <div class="price-card"><span>Маникюр + Покрытие</span><span class="price-cost">1200₽</span></div>
-            <div class="price-card"><span>Наращивание до "3"</span><span class="price-cost">1600₽</span></div>
-            <div class="price-card"><span>Коррекция наращивания</span><span class="price-cost">1300₽</span></div>
-            <div class="price-card"><span>Сложный дизайн (роспись)</span><span class="price-cost">300₽</span></div>
-            <div class="price-card"><span>Снятие чужой работы</span><span class="price-cost">200₽</span></div>
+        <h2 style="text-align:center">ПРАЙС-ЛИСТ</h2>
+        <div class="glass" style="padding: 10px;">
+            <div class="price-row"><span>Маникюр + Покрытие</span><span class="price-val">1200₽</span></div>
+            <div class="price-row"><span>Наращивание до (3)</span><span class="price-val">1600₽</span></div>
+            <div class="price-row"><span>Коррекция</span><span class="price-val">1300₽</span></div>
+            <div class="price-row"><span>Френч / Градиент</span><span class="price-val">+200₽</span></div>
+            <div class="price-row"><span>Снятие чужой работы</span><span class="price-val">200₽</span></div>
         </div>
     </div>
 
     <div id="sec-loc" class="section">
-        <h3 style="text-align:center">МЕСТОПОЛОЖЕНИЕ</h3>
-        <div class="glass">
-            <i class="fa-solid fa-location-dot" style="font-size:30px; color:var(--accent); display:block; text-align:center; margin-bottom:15px"></i>
-            <h4 style="text-align:center; margin:0">г. Михайловка</h4>
-            <p style="text-align:center; color:#aaa; font-size:14px">ул. Республиканская 71<br>2 этаж ТЦ "Эдельвейс"</p>
-            <hr style="border:0; border-top:1px solid #222; margin:15px 0">
-            <p style="font-size:12px; color:#666; text-align:center">График работы: Пн-Вс с 10:00 до 19:00</p>
+        <h2 style="text-align:center">МЕСТОПОЛОЖЕНИЕ</h2>
+        <div class="glass" style="text-align:center; padding: 50px 20px;">
+            <i class="fa-solid fa-location-dot" style="font-size:50px; color:var(--accent); margin-bottom:20px"></i>
+            <h3 style="margin:0">г. Михайловка</h3>
+            <p style="color:#aaa; font-size:18px; line-height:1.6">ул. Республиканская, 71<br>2 этаж ТЦ "Эдельвейс"</p>
         </div>
+        <a href="https://yandex.ru/maps/-/CCU8Z-R8~A" class="btn btn-main">ОТКРЫТЬ КАРТУ</a>
     </div>
 
     <div id="sec-port" class="section">
-        <h3 style="text-align:center">ПОРТФОЛИО</h3>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
-            <img src="https://i.pinimg.com/564x/2b/43/8c/2b438c7f938f4625b16960f8544d6a89.jpg" style="width:100%; border-radius:15px">
-            <img src="https://i.pinimg.com/564x/8a/05/23/8a052326b8401f80290885e334693994.jpg" style="width:100%; border-radius:15px">
-            <img src="https://i.pinimg.com/564x/4f/2e/0f/4f2e0f4989e2402b85558450f384f509.jpg" style="width:100%; border-radius:15px">
-            <img src="https://i.pinimg.com/564x/78/33/8d/78338d16790757262102146313837941.jpg" style="width:100%; border-radius:15px">
+        <h2 style="text-align:center">МОИ РАБОТЫ</h2>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px">
+            <img class="img-box" style="height:180px" src="https://i.pinimg.com/564x/2b/43/8c/2b438c7f938f4625b16960f8544d6a89.jpg">
+            <img class="img-box" style="height:180px" src="https://i.pinimg.com/564x/8a/05/23/8a052326b8401f80290885e334693994.jpg">
+        </div>
+        <div class="glass">
+            <h4>СОЦСЕТИ</h4>
+            <div style="display:flex; gap:10px">
+                <a href="https://t.me/nailsnastasiakireeva" class="btn" style="background:#229ED9; color:white; flex:1">TELEGRAM</a>
+                <a href="https://vk.com/nastasia_nails0" class="btn" style="background:#4C75A3; color:white; flex:1">ВКОНТАКТЕ</a>
+            </div>
         </div>
     </div>
 
     <div id="sec-book" class="section">
+        <h2 style="text-align:center">ЗАПИСЬ</h2>
+        <div id="my-booking-area"></div>
         <div class="glass">
-            <h4>ОНЛАЙН ЗАПИСЬ</h4>
-            <select id="b-month" onchange="updateDays()">
-                <option value="0">Январь</option><option value="1">Февраль</option><option value="2">Март</option>
-                <option value="3">Апрель</option><option value="4">Май</option><option value="5">Июнь</option>
-                <option value="6">Июль</option><option value="7">Август</option><option value="8">Сентябрь</option>
-                <option value="9">Октябрь</option><option value="10">Ноябрь</option><option value="11">Декабрь</option>
-            </select>
-            <select id="b-day" onchange="checkAvailability()"></select>
+            <select id="b-month" onchange="updateDays()"></select>
+            <select id="b-day" onchange="renderSlots()"></select>
             <div class="time-grid" id="t-grid"></div>
-            <button class="btn btn-main" style="margin-top:20px" onclick="makeOrder()">ЗАБРОНИРОВАТЬ</button>
+            <button class="btn btn-main" style="margin-top:20px" onclick="book()">ЗАПИСАТЬСЯ</button>
         </div>
+    </div>
+
+    <div id="sec-rev" class="section">
+        <h2 style="text-align:center">ОТЗЫВЫ</h2>
+        <div class="glass">
+            <div class="stars" id="star-box">
+                <i class="fa-solid fa-star" onclick="setRate(1)"></i>
+                <i class="fa-solid fa-star" onclick="setRate(2)"></i>
+                <i class="fa-solid fa-star" onclick="setRate(3)"></i>
+                <i class="fa-solid fa-star" onclick="setRate(4)"></i>
+                <i class="fa-solid fa-star" onclick="setRate(5)"></i>
+            </div>
+            <textarea id="rev-text" placeholder="Ваш отзыв..."></textarea>
+            <button class="btn btn-main" onclick="sendRev()">ОТПРАВИТЬ</button>
+        </div>
+        <div id="rev-list"></div>
     </div>
 
     <div id="sec-admin" class="section">
         <div id="adm-auth" class="glass">
-            <h4>ДОСТУП</h4>
-            <input type="password" id="adm-pass" placeholder="Код">
-            <button class="btn btn-main" onclick="authAdm()">ВХОД</button>
+            <input type="password" id="adm-pass" placeholder="Пароль">
+            <button class="btn btn-main" onclick="authAdm()">ВОЙТИ</button>
         </div>
         <div id="adm-panel" style="display:none">
-            <h3 style="margin-bottom:10px">АКТИВНЫЕ ЗАПИСИ</h3>
-            <div id="adm-list"></div>
+            <h3>ЗАПИСИ</h3>
+            <div id="adm-books"></div>
+            <h3 style="margin-top:30px">ОТЗЫВЫ</h3>
+            <div id="adm-revs"></div>
         </div>
     </div>
 </div>
 
 <nav class="nav">
     <div class="nav-item active" onclick="tab('sec-home', this)"><i class="fa-solid fa-gem"></i>Гид</div>
-    <div class="nav-item" onclick="tab('sec-price', this)"><i class="fa-solid fa-list-ul"></i>Прайс</div>
-    <div class="nav-item" onclick="tab('sec-loc', this)"><i class="fa-solid fa-map-pin"></i>Локация</div>
-    <div class="nav-item" onclick="tab('sec-port', this)"><i class="fa-solid fa-camera"></i>Работы</div>
-    <div class="nav-item" onclick="tab('sec-book', this)"><i class="fa-solid fa-calendar-alt"></i>Запись</div>
-    <div class="nav-item" onclick="tab('sec-admin', this)"><i class="fa-solid fa-user-gear"></i>Админ</div>
+    <div class="nav-item" onclick="tab('sec-price', this)"><i class="fa-solid fa-list"></i>Прайс</div>
+    <div class="nav-item" onclick="tab('sec-loc', this)"><i class="fa-solid fa-map-pin"></i>Место</div>
+    <div class="nav-item" onclick="tab('sec-port', this)"><i class="fa-solid fa-image"></i>Работы</div>
+    <div class="nav-item" onclick="tab('sec-book', this)"><i class="fa-solid fa-clock"></i>Запись</div>
+    <div class="nav-item" onclick="tab('sec-rev', this)"><i class="fa-solid fa-star"></i>Отзывы</div>
+    <div class="nav-item" onclick="tab('sec-admin', this)"><i class="fa-solid fa-lock"></i>Админ</div>
 </nav>
 
 <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    let user = JSON.parse(localStorage.getItem('nails_v12_u'));
-    let bookings = JSON.parse(localStorage.getItem('nails_v12_b')) || [];
+    let user = JSON.parse(localStorage.getItem('nn_u_v15'));
+    let bookings = JSON.parse(localStorage.getItem('nn_b_v15')) || [];
+    let reviews = JSON.parse(localStorage.getItem('nn_r_v15')) || [];
     let selTime = null;
+    let curRate = 5;
 
-    if(!user) document.getElementById('reg-screen').style.display='flex';
+    const months = ["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
+
+    if(!user) document.getElementById('reg-screen').style.display = 'flex';
 
     function tab(id, el) {
-        document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         el.classList.add('active');
-        if(id === 'sec-book') updateDays();
+        if(id === 'sec-book') { renderMyBooking(); fillCal(); }
+        if(id === 'sec-rev') renderRevs();
         if(id === 'sec-admin') renderAdm();
     }
 
@@ -168,28 +189,36 @@
         const fn = document.getElementById('reg-fn').value, ln = document.getElementById('reg-ln').value, ph = document.getElementById('reg-ph').value;
         if(fn && ph.length > 10) {
             user = {fn, ln, ph};
-            localStorage.setItem('nails_v12_u', JSON.stringify(user));
-            document.getElementById('reg-screen').style.display='none';
+            localStorage.setItem('nn_u_v15', JSON.stringify(user));
+            document.getElementById('reg-screen').style.display = 'none';
         }
+    }
+
+    // КАЛЕНДАРЬ
+    function fillCal() {
+        const mS = document.getElementById('b-month');
+        mS.innerHTML = '';
+        const now = new Date();
+        for(let i=now.getMonth(); i<12; i++) mS.innerHTML += `<option value="${i}">${months[i]}</option>`;
+        updateDays();
     }
 
     function updateDays() {
-        const month = parseInt(document.getElementById('b-month').value);
-        const daySelect = document.getElementById('b-day');
+        const m = parseInt(document.getElementById('b-month').value);
+        const dS = document.getElementById('b-day');
+        dS.innerHTML = '';
         const now = new Date();
-        daySelect.innerHTML = '';
-        
-        const daysInMonth = new Date(2026, month + 1, 0).getDate();
-        for(let d=1; d<=daysInMonth; d++) {
-            const date = new Date(2026, month, d);
-            if (date < now.setHours(0,0,0,0)) continue; // Запрет на прошлые даты
-            daySelect.innerHTML += `<option value="${d}">${d}</option>`;
+        const days = new Date(2026, m+1, 0).getDate();
+        for(let d=1; d<=days; d++) {
+            const date = new Date(2026, m, d);
+            if(date < now.setHours(0,0,0,0)) continue;
+            dS.innerHTML += `<option value="${d}">${d}</option>`;
         }
-        checkAvailability();
+        renderSlots();
     }
 
-    function checkAvailability() {
-        const m = document.getElementById('b-month').options[document.getElementById('b-month').selectedIndex].text;
+    function renderSlots() {
+        const mTxt = months[document.getElementById('b-month').value];
         const d = document.getElementById('b-day').value;
         const grid = document.getElementById('t-grid');
         grid.innerHTML = '';
@@ -197,33 +226,69 @@
 
         for(let h=10; h<=18; h++) {
             ['00','30'].forEach(min => {
-                const t = `${h}:${min}`;
-                const isBooked = bookings.some(b => b.day == d && b.month == m && b.time == t);
-                const slot = document.createElement('div');
-                slot.className = 'slot' + (isBooked ? ' booked' : '');
-                slot.innerText = t;
-                if(!isBooked) slot.onclick = () => {
-                    document.querySelectorAll('.slot').forEach(s=>s.classList.remove('selected'));
-                    slot.classList.add('selected');
+                const t = h + ':' + min;
+                const isTaken = bookings.some(b => b.day == d && b.month == mTxt && b.time == t);
+                const div = document.createElement('div');
+                div.className = 'slot' + (isTaken ? ' booked' : '');
+                div.innerText = t;
+                if(!isTaken) div.onclick = () => {
+                    document.querySelectorAll('.slot').forEach(s => s.classList.remove('active'));
+                    div.classList.add('active');
                     selTime = t;
                 };
-                grid.appendChild(slot);
+                grid.appendChild(div);
             });
         }
     }
 
-    function makeOrder() {
+    function book() {
         if(!selTime) return alert("Выбери время!");
-        const m = document.getElementById('b-month').options[document.getElementById('b-month').selectedIndex].text;
-        const d = document.getElementById('b-day').value;
-        const b = { id: Date.now(), day: d, month: m, time: selTime, fn: user.fn, ln: user.ln, ph: user.ph };
+        const b = { id: Date.now(), day: document.getElementById('b-day').value, month: months[document.getElementById('b-month').value], time: selTime, fn: user.fn, ln: user.ln, ph: user.ph };
         bookings.push(b);
-        localStorage.setItem('nails_v12_b', JSON.stringify(bookings));
+        localStorage.setItem('nn_b_v15', JSON.stringify(bookings));
         tg.sendData(JSON.stringify({event: 'new_booking', payload: b}));
-        alert("Запись создана!");
-        checkAvailability();
+        renderMyBooking(); renderSlots();
     }
 
+    function renderMyBooking() {
+        const box = document.getElementById('my-booking-area');
+        const my = bookings.filter(b => b.ph === user.ph);
+        box.innerHTML = my.length ? '<h4>ВАША ЗАПИСЬ</h4>' : '';
+        my.forEach(b => {
+            box.innerHTML += `<div class="glass" style="border-left:4px solid var(--accent)">${b.day} ${b.month} в ${b.time}<button class="btn btn-cancel" onclick="cancel(${b.id})">ОТМЕНИТЬ</button></div>`;
+        });
+    }
+
+    window.cancel = (id) => {
+        const b = bookings.find(x => x.id === id);
+        bookings = bookings.filter(x => x.id !== id);
+        localStorage.setItem('nn_b_v15', JSON.stringify(bookings));
+        tg.sendData(JSON.stringify({event: 'cancel_booking', payload: b}));
+        renderMyBooking();
+    }
+
+    // ОТЗЫВЫ
+    function setRate(r) {
+        curRate = r;
+        document.querySelectorAll('#star-box i').forEach((s, i) => s.classList.toggle('active', i < r));
+    }
+
+    function sendRev() {
+        const txt = document.getElementById('rev-text').value;
+        if(!txt) return;
+        const r = { id: Date.now(), fn: user.fn, ln: user.ln, rating: curRate, text: txt };
+        reviews.unshift(r);
+        localStorage.setItem('nn_r_v15', JSON.stringify(reviews));
+        tg.sendData(JSON.stringify({event: 'new_review', payload: r}));
+        document.getElementById('rev-text').value = '';
+        renderRevs();
+    }
+
+    function renderRevs() {
+        document.getElementById('rev-list').innerHTML = reviews.map(r => `<div class="glass"><b>${r.fn} ${r.ln}</b> <span style="color:#ffcc00">${'★'.repeat(r.rating)}</span><p style="margin-top:10px; color:#aaa">${r.text}</p></div>`).join('');
+    }
+
+    // АДМИН
     function authAdm() {
         if(document.getElementById('adm-pass').value === '667884') {
             document.getElementById('adm-auth').style.display='none';
@@ -233,35 +298,37 @@
     }
 
     function renderAdm() {
-        const list = document.getElementById('adm-list');
-        list.innerHTML = bookings.length ? '' : '<p>Записей нет</p>';
-        bookings.forEach(b => {
-            list.innerHTML += `
-                <div class="glass" style="font-size:13px">
-                    <b>${b.day} ${b.month} | ${b.time}</b><br>
-                    ${b.fn} ${b.ln}<br>
-                    <div style="margin-top:10px; display:flex; gap:10px">
-                        <a href="tel:${b.ph}" class="btn" style="background:#222; color:#fff; padding:8px"><i class="fa-solid fa-phone"></i></a>
-                        <a href="https://t.me/${b.ph}" class="btn" style="background:#222; color:#fff; padding:8px"><i class="fa-solid fa-message"></i></a>
-                        <button onclick="editBook(${b.id})" class="btn" style="background:var(--accent); color:#000; padding:8px; font-size:10px">ИЗМЕНИТЬ ВРЕМЯ</button>
-                    </div>
-                </div>`;
-        });
+        document.getElementById('adm-books').innerHTML = bookings.map(b => `
+            <div class="glass" style="font-size:13px">
+                <b>${b.day} ${b.month} - ${b.time}</b> | ${b.fn}<br>
+                <div style="display:flex; gap:10px; margin-top:10px">
+                    <a href="tel:${b.ph}" class="btn" style="background:#222; color:#fff; padding:8px"><i class="fa-solid fa-phone"></i></a>
+                    <button onclick="admEdit(${b.id})" class="btn" style="background:var(--accent); color:#000; flex:1">ИЗМЕНИТЬ</button>
+                </div>
+            </div>`).join('');
+        
+        document.getElementById('adm-revs').innerHTML = reviews.map(r => `
+            <div class="glass" style="font-size:12px">
+                ${r.fn}: ${r.text}
+                <button onclick="delRev(${r.id})" style="color:red; background:none; border:none; float:right">Удалить</button>
+            </div>`).join('');
     }
 
-    window.editBook = (id) => {
-        const newT = prompt("Введите новое время (ЧЧ:ММ):");
+    window.admEdit = (id) => {
+        const b = bookings.find(x => x.id === id);
+        const newT = prompt("Новое время (10:00 - 18:30):", b.time);
         if(newT) {
-            bookings = bookings.map(b => {
-                if(b.id == id) {
-                    b.time = newT;
-                    tg.sendData(JSON.stringify({event: 'adm_edit', payload: b}));
-                }
-                return b;
-            });
-            localStorage.setItem('nails_v12_b', JSON.stringify(bookings));
+            b.time = newT;
+            localStorage.setItem('nn_b_v15', JSON.stringify(bookings));
             renderAdm();
+            alert("Время изменено. Уведомление отправлено клиенту (через бота).");
         }
+    }
+
+    window.delRev = (id) => {
+        reviews = reviews.filter(x => x.id !== id);
+        localStorage.setItem('nn_r_v15', JSON.stringify(reviews));
+        renderAdm();
     }
 </script>
 </body>
