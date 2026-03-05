@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nastasia_Nailss ✨</title>
+    <title>Nastasia_Nailss | Business 💎</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -11,25 +11,26 @@
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; padding-bottom: 110px; }
         .container { padding: 20px; max-width: 500px; margin: auto; }
         .glass { background: var(--glass); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1); border-radius: 28px; padding: 20px; margin-bottom: 20px; }
+        .brand { text-align: center; font-family: 'Georgia', serif; font-size: 26px; letter-spacing: 2px; color: var(--accent); margin: 20px 0; text-shadow: 0 0 10px rgba(255,175,189,0.3); }
         
-        .brand { text-align: center; font-family: 'Georgia', serif; font-size: 24px; letter-spacing: 2px; color: var(--accent); margin: 10px 0; }
-        
-        /* Статистика и База */
-        .stat-card { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 15px; text-align: center; font-size: 13px; }
-        .client-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; }
-        .history-tag { font-size: 10px; background: var(--accent); color: #000; padding: 2px 6px; border-radius: 5px; margin-left: 5px; }
+        /* Секция Базы Клиентов */
+        .client-card { background: rgba(255,255,255,0.05); border-radius: 18px; padding: 15px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.03); }
+        .client-info { display: flex; justify-content: space-between; align-items: center; }
+        .client-name { font-weight: bold; color: var(--accent); }
+        .client-meta { font-size: 11px; opacity: 0.6; margin-top: 5px; }
+        .visits-badge { background: var(--gradient); color: #000; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: bold; }
 
         /* Навигация */
-        .nav { position: fixed; bottom: 20px; left: 5%; width: 90%; height: 75px; background: rgba(15,15,15,0.95); backdrop-filter: blur(30px); border-radius: 35px; display: flex; justify-content: space-around; align-items: center; border: 1px solid rgba(255,255,255,0.1); z-index: 1000; }
-        .nav-item { color: #444; text-align: center; transition: 0.4s; }
+        .nav { position: fixed; bottom: 20px; left: 5%; width: 90%; height: 70px; background: rgba(15,15,15,0.95); backdrop-filter: blur(30px); border-radius: 30px; display: flex; justify-content: space-around; align-items: center; border: 1px solid rgba(255,255,255,0.1); z-index: 1000; }
+        .nav-item { color: #444; font-size: 20px; transition: 0.4s; }
         .nav-item.active { color: var(--accent); transform: translateY(-5px); }
 
         .section { display: none; animation: fadeIn 0.4s ease; }
         .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .btn-main { width: 100%; padding: 15px; border-radius: 18px; border: none; background: var(--gradient); color: #000; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        input { width: 100%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid #333; border-radius: 12px; color: #fff; margin-bottom: 10px; }
+        input, textarea { width: 100%; padding: 15px; background: rgba(0,0,0,0.3); border: 1px solid #333; border-radius: 15px; color: #fff; margin-bottom: 10px; box-sizing: border-box; }
+        .btn-main { width: 100%; padding: 16px; border-radius: 18px; border: none; background: var(--gradient); color: #000; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -38,38 +39,41 @@
 
         <div id="sec-gallery" class="section active">
             <div class="glass">
-                <img src="https://images.unsplash.com/photo-1632345031435-8727f6897d53?w=500" style="width:100%; border-radius:20px;">
-                <button class="btn-main" onclick="tab('sec-book')">ЗАПИСАТЬСЯ ✨</button>
+                <img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=800" style="width:100%; border-radius:22px; margin-bottom:15px;">
+                <p style="text-align:center; font-style:italic; opacity:0.8;">Создаем шедевры, которые подчеркивают твою индивидуальность ✨</p>
+                <button class="btn-main" onclick="tab('sec-book')">ЗАПИСАТЬСЯ НА МАНИКЮР 🌸</button>
             </div>
         </div>
 
         <div id="sec-book" class="section">
-            <div class="glass" id="calendar"></div>
+            <div class="glass">
+                <div style="display:grid; grid-template-columns: repeat(7, 1fr); gap:8px; text-align:center;" id="calendar"></div>
+            </div>
             <div id="time-box" class="glass" style="display:none">
-                <div id="times" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;"></div>
-                <textarea id="wishes" placeholder="Твои пожелания... 🌸" style="width:100%; margin-top:10px; background:none; border:1px solid #333; color:#fff; border-radius:10px; padding:10px;"></textarea>
+                <div id="times" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-bottom:15px;"></div>
+                <textarea id="wishes" placeholder="Твои пожелания (дизайн, форма, снятие)... 🕊️"></textarea>
             </div>
         </div>
 
         <div id="sec-admin" class="section">
             <div id="admin-auth" class="glass">
-                <input type="password" id="adminPass" placeholder="Код доступа">
-                <button class="btn-main" onclick="authAdmin()">ВОЙТИ</button>
+                <input type="password" id="adminPass" placeholder="Пароль мастера">
+                <button class="btn-main" onclick="authAdmin()">ВОЙТИ В ПАНЕЛЬ 👑</button>
             </div>
             <div id="admin-panel" style="display:none">
                 <div class="glass">
-                    <h3>Прибыль 💰</h3>
-                    <input type="number" id="incAmt" placeholder="Сумма (₽)">
-                    <button class="btn-main" onclick="addIncome()">ДОБАВИТЬ</button>
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px; margin-top:10px;" id="stats">
-                        <div class="stat-card">Месяц: <b id="m-stat">0₽</b></div>
-                        <div class="stat-card">Год: <b id="y-stat">0₽</b></div>
+                    <h3 style="margin-top:0">Прибыль 💰</h3>
+                    <input type="number" id="incAmt" placeholder="Сумма визита (₽)">
+                    <button class="btn-main" onclick="addIncome()">ДОБАВИТЬ ДОХОД</button>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:15px;">
+                        <div class="client-card" style="text-align:center">Месяц<br><b id="m-stat" style="color:var(--accent)">0₽</b></div>
+                        <div class="client-card" style="text-align:center">Год<br><b id="y-stat" style="color:var(--accent)">0₽</b></div>
                     </div>
                 </div>
                 <div class="glass">
-                    <h3>База клиентов 👤</h3>
-                    <div id="client-list" style="max-height: 300px; overflow-y: auto;">
-                        <p style="font-size: 12px; opacity: 0.5;">Загрузка списка из бота...</p>
+                    <h3 style="margin-top:0">База Клиентов 👤</h3>
+                    <div id="client-list">
+                        <p style="font-size:12px; opacity:0.5; text-align:center;">Загружаем историю из базы...</p>
                     </div>
                 </div>
             </div>
@@ -77,8 +81,8 @@
     </div>
 
     <div class="nav">
-        <div class="nav-item active" onclick="tab('sec-gallery', this)"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
-        <div class="nav-item" onclick="tab('sec-book', this)"><i class="fa-solid fa-calendar-alt"></i></div>
+        <div class="nav-item active" onclick="tab('sec-gallery', this)"><i class="fa-solid fa-gem"></i></div>
+        <div class="nav-item" onclick="tab('sec-book', this)"><i class="fa-solid fa-calendar-plus"></i></div>
         <div class="nav-item" onclick="tab('sec-admin', this)"><i class="fa-solid fa-crown"></i></div>
     </div>
 
@@ -98,14 +102,11 @@
         if(document.getElementById('adminPass').value === "7777") {
             document.getElementById('admin-auth').style.display = 'none';
             document.getElementById('admin-panel').style.display = 'block';
-            // Запрашиваем данные у бота
+            updateStats();
             tg.sendData(JSON.stringify({action: "get_clients"}));
         }
     }
 
-    // Эта функция будет вызываться, когда бот пришлет список (через showAlert для примера или просто имитация)
-    // В реальном Telegram WebApp данные передаются через bot.answerWebAppQuery
-    
     function addIncome() {
         const val = parseFloat(document.getElementById('incAmt').value);
         if(val) {
@@ -113,6 +114,7 @@
             localStorage.setItem('p_data', JSON.stringify(profit));
             updateStats();
             document.getElementById('incAmt').value = '';
+            tg.showAlert("Доход сохранен! 💸");
         }
     }
 
@@ -124,25 +126,32 @@
 
     function renderCal() {
         const grid = document.getElementById('calendar'); grid.innerHTML = '';
-        for(let i=1; i<=30; i++) {
+        const now = new Date();
+        for(let i=1; i<=31; i++) {
             const d = document.createElement('div'); d.innerText = i;
-            d.style.padding = '10px'; d.onclick = () => {
-                state.date = 'Марта ' + i;
-                document.getElementById('time-box').style.display = 'block';
-                renderTime();
-            };
+            d.style.padding = '10px'; d.style.borderRadius = '10px';
+            if(i < now.getDate()) d.style.opacity = '0.2';
+            else {
+                d.onclick = () => {
+                    document.querySelectorAll('#calendar div').forEach(x => x.style.background = 'none');
+                    d.style.background = 'var(--accent)'; d.style.color = '#000';
+                    state.date = `2024-03-${i}`; // Упрощенно
+                    document.getElementById('time-box').style.display = 'block';
+                    renderTime();
+                };
+            }
             grid.appendChild(d);
         }
     }
 
     function renderTime() {
         const grid = document.getElementById('times'); grid.innerHTML = '';
-        ["12:00", "15:00", "18:00"].forEach(t => {
-            const b = document.createElement('div'); b.innerText = t; b.className = 'stat-card';
-            b.onclick = () => {
+        ["10:00", "13:00", "16:00", "19:00"].forEach(t => {
+            const b = document.createElement('div'); b.innerText = t; b.className = 'client-card';
+            b.style.textAlign = 'center'; b.onclick = () => {
                 state.time = t;
                 state.wishes = document.getElementById('wishes').value;
-                tg.MainButton.setText("ЗАПИСАТЬСЯ ✨").show();
+                tg.MainButton.setText(`ЗАПИСАТЬСЯ НА ${t} ✨`).show();
             };
             grid.appendChild(b);
         });
