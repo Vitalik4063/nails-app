@@ -3,105 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nastasia_Nailss</title>
+    <title>Nastasia_Nailss WebApp</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --accent: #ffafbd; --bg: #000; --glass: rgba(30, 30, 30, 0.95); --gradient: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%); }
+        :root { --accent: #ffafbd; --bg: #000; --glass: rgba(255, 255, 255, 0.05); --gradient: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%); }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; padding-bottom: 80px; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; padding-bottom: 90px; }
         .container { padding: 15px; max-width: 500px; margin: auto; }
-        .glass { background: var(--glass); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 18px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .glass { background: var(--glass); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 18px; margin-bottom: 15px; backdrop-filter: blur(10px); }
         
         /* КНОПКИ */
-        .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 13px; text-decoration: none; text-align: center; display: block; color: #000; margin-bottom: 10px; }
-        .btn-main { background: var(--gradient); }
-        .btn-admin { background: #333; color: #fff; border: 1px solid #555; }
+        .btn { width: 100%; padding: 14px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 12px; display: block; text-align: center; color: #000; text-decoration: none; margin-bottom: 10px; }
+        .btn-main { background: var(--gradient); box-shadow: 0 4px 15px rgba(255,175,189,0.3); }
+        .btn-outline { background: transparent; border: 1px solid var(--accent); color: var(--accent); }
 
         /* НАВИГАЦИЯ */
-        .nav { position: fixed; bottom: 12px; left: 4%; width: 92%; height: 65px; background: #111; border-radius: 20px; display: flex; justify-content: space-around; align-items: center; border: 1px solid #333; z-index: 1000; }
-        .nav-item { color: #555; text-align: center; font-size: 10px; flex: 1; }
+        .nav { position: fixed; bottom: 15px; left: 5%; width: 90%; height: 70px; background: rgba(20,20,20,0.9); border-radius: 25px; display: flex; justify-content: space-around; align-items: center; border: 1px solid #333; z-index: 1000; }
+        .nav-item { color: #666; text-align: center; font-size: 10px; flex: 1; transition: 0.3s; }
         .nav-item.active { color: var(--accent); }
         .nav-item i { font-size: 20px; display: block; margin-bottom: 4px; }
 
-        /* ПРАЙС */
-        .price-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; border-bottom: 1px dashed #333; padding-bottom: 4px; }
-        .price-val { color: var(--accent); font-weight: bold; }
+        /* ГИД ФОРМ */
+        .guide-img { width: 100%; border-radius: 15px; height: 180px; object-fit: cover; margin-bottom: 10px; border: 1px solid #444; }
+
+        /* ЗВЕЗДЫ */
+        .rating { display: flex; gap: 10px; justify-content: center; margin: 10px 0; font-size: 24px; color: #444; }
+        .rating .star.active { color: #ffcc00; }
+
+        /* ТАБЛИЦА ПРАЙСА */
+        .price-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #333; font-size: 14px; }
 
         .section { display: none; }
-        .section.active { display: block; animation: fadeIn 0.3s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .section.active { display: block; animation: slideUp 0.3s ease; }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        input, select { width: 100%; padding: 12px; background: #1a1a1a; border: 1px solid #333; border-radius: 10px; color: #fff; margin-bottom: 12px; }
+        input, select, textarea { width: 100%; padding: 14px; background: #111; border: 1px solid #333; border-radius: 12px; color: #fff; margin-bottom: 10px; font-size: 16px; }
     </style>
 </head>
 <body>
 
 <div id="reg-screen" style="position:fixed; inset:0; background:#000; z-index:9999; display:none; align-items:center; justify-content:center; padding:20px;">
     <div class="glass" style="width:100%; text-align:center;">
-        <h2 style="color:var(--accent)"> Nastasia_Nailss</h2>
+        <h2 style="color:var(--accent)">ДОБРО ПОЖАЛОВАТЬ</h2>
         <input id="reg-fn" placeholder="Имя">
-        <input id="reg-ph" type="tel" value="+7">
-        <button class="btn btn-main" onclick="saveUser()">ВОЙТИ</button>
+        <input id="reg-ln" placeholder="Фамилия">
+        <input id="reg-ph" type="tel" value="+7" maxlength="12">
+        <button class="btn btn-main" onclick="saveUser()">НАЧАТЬ</button>
     </div>
 </div>
 
 <div class="container">
-    <div id="sec-price" class="section active">
-        <h3 style="text-align:center">УСЛУГИ И ЦЕНЫ</h3>
+    <div id="sec-home" class="section active">
+        <h3 style="text-align:center">ГИД ПО ФОРМАМ</h3>
         <div class="glass">
-            <div class="price-row"><span>Маникюр с покрытием</span><span class="price-val">1200₽</span></div>
-            <div class="price-row"><span>Наращивание до (3)</span><span class="price-val">1600₽</span></div>
-            <div class="price-row"><span>Коррекция</span><span class="price-val">1300₽</span></div>
-            <div class="price-row"><span>Сложный дизайн</span><span class="price-val">300₽</span></div>
+            <img class="guide-img" src="https://i.pinimg.com/564x/44/9d/90/449d900693466f2597406604618e7d4c.jpg">
+            <h4>Миндалевидная</h4>
+            <p style="font-size:13px; opacity:0.7">Визуально удлиняет пальцы. Подходит для средних и длинных ногтей. Идеальна для тонких рук.</p>
         </div>
-        <button class="btn btn-main" onclick="tab('sec-book', document.querySelectorAll('.nav-item')[2])">ЗАПИСАТЬСЯ</button>
+        <div class="glass">
+            <img class="guide-img" src="https://i.pinimg.com/564x/6c/20/35/6c203525281734560731037593259858.jpg">
+            <h4>Мягкий квадрат</h4>
+            <p style="font-size:13px; opacity:0.7">Самая практичная форма. Подходит всем, особенно обладательницам широкой ногтевой пластины.</p>
+        </div>
+    </div>
+
+    <div id="sec-price" class="section">
+        <h3 style="text-align:center">ПРАЙС-ЛИСТ</h3>
+        <div class="glass">
+            <div class="price-item"><span>Маникюр с покрытием</span><b>1200₽</b></div>
+            <div class="price-item"><span>Наращивание до 3</span><b>1600₽</b></div>
+            <div class="price-item"><span>Коррекция</span><b>1300₽</b></div>
+            <div class="price-item"><span>Снятие чужой работы</span><b>200₽</b></div>
+        </div>
     </div>
 
     <div id="sec-port" class="section">
-        <h3>МОИ РАБОТЫ</h3>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <img src="https://i.pinimg.com/564x/2b/43/8c/2b438c7f938f4625b16960f8544d6a89.jpg" style="width:100%; height:150px; object-fit:cover; border-radius:15px;">
-            <img src="https://i.pinimg.com/564x/8a/05/23/8a052326b8401f80290885e334693994.jpg" style="width:100%; height:150px; object-fit:cover; border-radius:15px;">
+        <h3 style="text-align:center">МОИ РАБОТЫ</h3>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px;">
+            <img src="https://i.pinimg.com/564x/2b/43/8c/2b438c7f938f4625b16960f8544d6a89.jpg" style="width:100%; border-radius:12px;">
+            <img src="https://i.pinimg.com/564x/8a/05/23/8a052326b8401f80290885e334693994.jpg" style="width:100%; border-radius:12px;">
         </div>
-        <div class="glass" style="margin-top:15px">
-            <h4>СОЦСЕТИ</h4>
-            <a href="https://t.me/nailsnastasiakireeva" class="btn btn-admin">TELEGRAM</a>
-            <a href="https://vk.com/nastasia_nails0" class="btn btn-admin">ВКОНТАКТЕ</a>
+        <div class="glass">
+            <h4 style="text-align:center">МЫ В СОЦСЕТЯХ</h4>
+            <a href="https://t.me/nailsnastasiakireeva" class="btn" style="background:#229ED9; color:white;"><i class="fa-brands fa-telegram"></i> Telegram Канал</a>
+            <a href="https://vk.com/nastasia_nails0" class="btn" style="background:#4C75A3; color:white;"><i class="fa-brands fa-vk"></i> ВКонтакте</a>
         </div>
     </div>
 
     <div id="sec-book" class="section">
         <div class="glass">
-            <h4>ВЫБОР ВРЕМЕНИ</h4>
-            <select id="book-month"><option>Март</option><option>Апрель</option></select>
-            <input type="number" id="book-day" placeholder="Число">
-            <div id="time-grid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px"></div>
-            <button class="btn btn-main" style="margin-top:15px" onclick="confirmBook()">ПОДТВЕРДИТЬ</button>
+            <h4>ОНЛАЙН ЗАПИСЬ</h4>
+            <label style="font-size:12px; opacity:0.6">Выберите месяц</label>
+            <select id="book-month">
+                <option>Март</option><option>Апрель</option><option>Май</option><option>Июнь</option>
+                <option>Июль</option><option>Август</option><option>Сентябрь</option><option>Октябрь</option>
+            </select>
+            <label style="font-size:12px; opacity:0.6">Выберите число</label>
+            <select id="book-day"></select>
+            <label style="font-size:12px; opacity:0.6">Выберите время</label>
+            <div id="time-grid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:5px"></div>
+            <button class="btn btn-main" style="margin-top:20px" onclick="confirmBook()">ЗАПИСАТЬСЯ</button>
         </div>
+    </div>
+
+    <div id="sec-revs" class="section">
+        <div class="glass">
+            <h4>ОСТАВИТЬ ОТЗЫВ</h4>
+            <div class="rating" id="star-box">
+                <i class="fa-solid fa-star star" onclick="setRate(1)"></i>
+                <i class="fa-solid fa-star star" onclick="setRate(2)"></i>
+                <i class="fa-solid fa-star star" onclick="setRate(3)"></i>
+                <i class="fa-solid fa-star star" onclick="setRate(4)"></i>
+                <i class="fa-solid fa-star star" onclick="setRate(5)"></i>
+            </div>
+            <textarea id="rev-text" placeholder="Ваш комментарий..." rows="3"></textarea>
+            <button class="btn btn-main" onclick="sendReview()">ОТПРАВИТЬ</button>
+        </div>
+        <div id="reviews-list"></div>
     </div>
 
     <div id="sec-admin" class="section">
         <div id="adm-auth" class="glass">
-            <h4>ВХОД МАСТЕРА</h4>
+            <h4>ВХОД ДЛЯ МАСТЕРА</h4>
             <input type="password" id="adm-pass" placeholder="Пароль">
             <button class="btn btn-main" onclick="checkPass()">ВОЙТИ</button>
         </div>
         <div id="adm-panel" style="display:none">
-            <div class="glass" id="adm-stats">
-                <h4>БАЗА ДАННЫХ</h4>
-                <p id="stat-count"></p>
-                <button class="btn btn-admin" onclick="exportData()">СКАЧАТЬ JSON</button>
-            </div>
-            <div id="adm-list"></div>
+            <h3>КЛИЕНТЫ</h3>
+            <div id="adm-users" class="glass" style="max-height:150px; overflow:auto; font-size:12px"></div>
+            <h3>ЗАПИСИ</h3>
+            <div id="adm-books" style="margin-bottom:20px"></div>
+            <h3>УПРАВЛЕНИЕ ОТЗЫВАМИ</h3>
+            <div id="adm-rev-list"></div>
         </div>
     </div>
 </div>
 
 <nav class="nav">
-    <div class="nav-item active" onclick="tab('sec-price', this)"><i class="fa-solid fa-tags"></i>Прайс</div>
-    <div class="nav-item" onclick="tab('sec-port', this)"><i class="fa-solid fa-heart"></i>Работы</div>
-    <div class="nav-item" onclick="tab('sec-book', this)"><i class="fa-solid fa-clock"></i>Запись</div>
+    <div class="nav-item active" onclick="tab('sec-home', this)"><i class="fa-solid fa-house"></i>Гид</div>
+    <div class="nav-item" onclick="tab('sec-price', this)"><i class="fa-solid fa-list"></i>Прайс</div>
+    <div class="nav-item" onclick="tab('sec-port', this)"><i class="fa-solid fa-image"></i>Работы</div>
+    <div class="nav-item" onclick="tab('sec-book', this)"><i class="fa-solid fa-calendar-check"></i>Запись</div>
+    <div class="nav-item" onclick="tab('sec-revs', this)"><i class="fa-solid fa-star"></i>Отзывы</div>
     <div class="nav-item" onclick="tab('sec-admin', this)"><i class="fa-solid fa-lock"></i>Админ</div>
 </nav>
 
@@ -109,8 +153,10 @@
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    let user = JSON.parse(localStorage.getItem('nn_u'));
-    let bookings = JSON.parse(localStorage.getItem('nn_b')) || [];
+    let user = JSON.parse(localStorage.getItem('nails_u_v10'));
+    let bookings = JSON.parse(localStorage.getItem('nails_b_v10')) || [];
+    let reviews = JSON.parse(localStorage.getItem('nails_r_v10')) || [];
+    let curRate = 5;
     let selTime = null;
 
     if(!user) document.getElementById('reg-screen').style.display = 'flex';
@@ -120,73 +166,119 @@
         document.getElementById(id).classList.add('active');
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         el.classList.add('active');
-        if(id === 'sec-admin' && document.getElementById('adm-panel').style.display === 'block') renderAdmin();
+        if(id === 'sec-revs') renderReviews();
+        if(id === 'sec-admin') renderAdmin();
     }
 
     function saveUser() {
-        const fn = document.getElementById('reg-fn').value, ph = document.getElementById('reg-ph').value;
-        if(fn && ph.length > 10) {
-            user = {fn, ph};
-            localStorage.setItem('nn_u', JSON.stringify(user));
+        const fn = document.getElementById('reg-fn').value;
+        const ln = document.getElementById('reg-ln').value;
+        const ph = document.getElementById('reg-ph').value;
+        if(fn && ph.length >= 11) {
+            user = {fn, ln, ph};
+            localStorage.setItem('nails_u_v10', JSON.stringify(user));
             document.getElementById('reg-screen').style.display = 'none';
             tg.sendData(JSON.stringify({event: 'registration', payload: user}));
-        }
+        } else { alert("Введите имя и полный номер +7..."); }
     }
+
+    // Заполнение дней 1-31
+    const daySelect = document.getElementById('book-day');
+    for(let i=1; i<=31; i++) { daySelect.innerHTML += `<option>${i}</option>`; }
 
     // Сетка времени 12:00 - 19:00
     const grid = document.getElementById('time-grid');
-    for(let h=12; h<=18; h++) {
+    for(let h=12; h<=19; h++) {
         ['00','30'].forEach(m => {
+            if(h==19 && m=='30') return;
             const t = h + ':' + m;
             const d = document.createElement('div');
             d.className = 'time-slot';
-            d.style = "padding:10px; background:#222; border-radius:10px; text-align:center; font-size:12px; cursor:pointer";
+            d.style = "padding:10px; background:#1a1a1a; border-radius:10px; text-align:center; font-size:12px; border:1px solid #333; cursor:pointer";
             d.innerText = t;
             d.onclick = () => {
-                document.querySelectorAll('.time-slot').forEach(s => s.style.background = '#222');
-                d.style.background = 'var(--accent)';
-                selTime = t;
+                document.querySelectorAll('.time-slot').forEach(s => {s.style.background='#1a1a1a'; s.style.color='#fff'});
+                d.style.background='var(--accent)'; d.style.color='#000'; selTime = t;
             };
             grid.appendChild(d);
         });
     }
 
+    function setRate(r) {
+        curRate = r;
+        const stars = document.querySelectorAll('.star');
+        stars.forEach((s, i) => s.classList.toggle('active', i < r));
+    }
+
+    function sendReview() {
+        const text = document.getElementById('rev-text').value;
+        if(!text) return;
+        const rev = { id: Date.now(), fn: user.fn, ln: user.ln, rating: curRate, text: text };
+        reviews.unshift(rev);
+        localStorage.setItem('nails_r_v10', JSON.stringify(reviews));
+        tg.sendData(JSON.stringify({event: 'new_review', payload: rev}));
+        document.getElementById('rev-text').value = '';
+        renderReviews();
+    }
+
+    function renderReviews() {
+        const box = document.getElementById('reviews-list');
+        box.innerHTML = reviews.map(r => `
+            <div class="glass">
+                <b style="color:var(--accent)">${r.fn} ${r.ln}</b> 
+                <span style="color:#ffcc00; margin-left:10px">${'★'.repeat(r.rating)}</span>
+                <p style="margin:5px 0 0; font-size:14px">${r.text}</p>
+            </div>
+        `).join('');
+    }
+
     function confirmBook() {
-        const d = document.getElementById('book-day').value;
-        if(!d || !selTime) return alert("Заполни дату и время!");
-        const b = { id: Date.now(), day: d, month: document.getElementById('book-month').value, time: selTime, fn: user.fn, ph: user.ph };
+        if(!selTime) return alert("Выберите время!");
+        const b = {
+            id: Date.now(),
+            day: document.getElementById('book-day').value,
+            month: document.getElementById('book-month').value,
+            time: selTime, fn: user.fn, ln: user.ln, ph: user.ph
+        };
         bookings.push(b);
-        localStorage.setItem('nn_b', JSON.stringify(bookings));
+        localStorage.setItem('nails_b_v10', JSON.stringify(bookings));
         tg.sendData(JSON.stringify({event: 'new_booking', payload: b}));
-        alert("Запись сохранена!");
+        alert("Запись успешно создана!");
     }
 
     function checkPass() {
-        if(document.getElementById('adm-pass').value === '7777') {
+        if(document.getElementById('adm-pass').value === '667884') {
             document.getElementById('adm-auth').style.display = 'none';
             document.getElementById('adm-panel').style.display = 'block';
             renderAdmin();
-        }
+        } else { alert("Неверный код"); }
     }
 
     function renderAdmin() {
-        const list = document.getElementById('adm-list');
-        list.innerHTML = '<h4>СПИСОК ЗАПИСЕЙ:</h4>';
-        bookings.forEach(b => {
-            list.innerHTML += `<div class="glass" style="font-size:13px">${b.day} ${b.month} - ${b.time} | ${b.fn}</div>`;
-        });
-        document.getElementById('stat-count').innerText = `Всего записей в памяти: ${bookings.length}`;
+        const bBox = document.getElementById('adm-books');
+        const uBox = document.getElementById('adm-users');
+        const rBox = document.getElementById('adm-rev-list');
+        
+        bBox.innerHTML = bookings.map(b => `<div class="glass" style="font-size:12px"><b>${b.day} ${b.month} ${b.time}</b> - ${b.fn} (${b.ph})</div>`).join('');
+        
+        const uniqueUsers = [...new Set(bookings.map(b => b.ph))];
+        uBox.innerHTML = uniqueUsers.map(ph => `<div>• ${ph}</div>`).join('');
+
+        rBox.innerHTML = reviews.map(r => `
+            <div class="glass" style="font-size:12px">
+                <b>${r.fn}:</b> ${r.text} 
+                <button onclick="delRev(${r.id})" style="color:red; background:none; border:none; float:right">Удалить</button>
+            </div>
+        `).join('');
     }
 
-    function exportData() {
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(bookings));
-        const downloadAnchorNode = document.createElement('a');
-        downloadAnchorNode.setAttribute("href", dataStr);
-        downloadAnchorNode.setAttribute("download", "nails_database.json");
-        document.body.appendChild(downloadAnchorNode);
-        downloadAnchorNode.click();
-        downloadAnchorNode.remove();
-    }
+    window.delRev = (id) => {
+        reviews = reviews.filter(r => r.id !== id);
+        localStorage.setItem('nails_r_v10', JSON.stringify(reviews));
+        renderAdmin();
+    };
+
+    setRate(5); // По умолчанию 5 звезд
 </script>
 </body>
 </html>
