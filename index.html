@@ -9,46 +9,54 @@
         :root { --accent: #d4a373; --pink: #f4d3d9; --bg: #fffafb; --text: #4a4a4a; }
         body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
         .container { padding: 20px; max-width: 450px; margin: auto; }
-        .page { display: none; animation: fadeIn 0.3s ease; }
-        .page.active { display: block; }
         .card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 20px; }
-        input { width: 100%; padding: 15px; margin: 15px 0; border: 1px solid var(--pink); border-radius: 12px; outline: none; box-sizing: border-box; font-size: 16px; }
-        .btn-main { background: var(--accent); color: white; border: none; padding: 15px; width: 100%; border-radius: 12px; font-weight: 600; cursor: pointer; }
+        
+        h2 { color: var(--accent); text-align: center; font-size: 18px; font-weight: 400; text-transform: uppercase; margin-top: 0; letter-spacing: 1px; }
+        input { width: 100%; padding: 15px; margin: 10px 0 10px 0; border: 1px solid var(--pink); border-radius: 12px; outline: none; box-sizing: border-box; font-size: 16px; }
+        
+        /* Прайс-лист */
+        .price-item { display: flex; justify-content: space-between; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px dashed var(--pink); font-size: 14px; }
+        .price-item b { color: var(--accent); }
+
         .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; }
-        .day { padding: 10px 0; border-radius: 10px; cursor: pointer; transition: 0.2s; }
+        .day { padding: 10px 0; border-radius: 10px; cursor: pointer; font-size: 14px; }
         .day.disabled { opacity: 0.15; cursor: not-allowed; }
         .day.selected { background: var(--accent) !important; color: white; }
+        
         .time-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
-        .time-slot { padding: 12px; border: 1px solid var(--pink); border-radius: 12px; text-align: center; cursor: pointer; }
-        .time-slot.selected { background: var(--accent); color: white; border-color: var(--accent); }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .time-slot { padding: 12px; border: 1px solid var(--pink); border-radius: 12px; text-align: center; font-size: 14px; cursor: pointer; }
+        .time-slot.selected { background: var(--accent); color: white; }
     </style>
 </head>
 <body>
 <div class="container">
-    <div id="regPage" class="page active">
-        <div class="card">
-            <h2 style="color: var(--accent); text-align: center;">Регистрация</h2>
-            <p style="text-align: center; font-size: 14px;">Пожалуйста, введите ваше имя для записи</p>
-            <input type="text" id="userNameInput" placeholder="Ваше имя">
-            <button class="btn-main" onclick="saveName()">Продолжить</button>
-        </div>
+    <div class="card">
+        <h2>Прайс и услуги</h2>
+        <div class="price-item"><span>☁️ Комплекс «Эстетика»</span><b>1200₽</b></div>
+        <div class="price-item"><span>✨ Комплекс «Длина»</span><b>1700₽</b></div>
+        <div class="price-item"><span>🎨 Дизайн (1 ноготь)</span><b>от 100₽</b></div>
+        <div class="price-item"><span>🤍 Френч</span><b>300₽</b></div>
+        <div style="font-size: 10px; text-align: center; opacity: 0.5; margin-top: 10px;">*В каждый комплекс включен массаж рук</div>
     </div>
 
-    <div id="bookingPage" class="page">
-        <div class="card">
-            <div class="cal-header">
-                <button style="background:none; border:none; color:var(--accent); font-size:20px;" onclick="changeMonth(-1)">‹</button>
-                <div id="monthDisplay" style="font-weight: 600; text-transform: uppercase;"></div>
-                <button style="background:none; border:none; color:var(--accent); font-size:20px;" onclick="changeMonth(1)">›</button>
-            </div>
-            <div class="calendar-grid" id="calendarGrid"></div>
+    <div class="card">
+        <h2>Ваше имя</h2>
+        <input type="text" id="userName" placeholder="Как к вам обращаться?" autocomplete="off">
+    </div>
+
+    <div class="card">
+        <div class="cal-header">
+            <button style="background:none; border:none; color:var(--accent); font-size:20px;" onclick="changeMonth(-1)">‹</button>
+            <div id="monthDisplay" style="font-weight: 600;"></div>
+            <button style="background:none; border:none; color:var(--accent); font-size:20px;" onclick="changeMonth(1)">›</button>
         </div>
-        <div id="timeSection" class="card" style="display: none;">
-            <div style="text-align: center; font-size: 12px; color: var(--accent); margin-bottom: 10px;">ВЫБЕРИТЕ ВРЕМЯ</div>
-            <div class="time-grid" id="timeGrid"></div>
-        </div>
+        <div class="calendar-grid" id="calendarGrid"></div>
+    </div>
+
+    <div id="timeSection" class="card" style="display: none;">
+        <h2>Выберите время</h2>
+        <div class="time-grid" id="timeGrid"></div>
     </div>
 </div>
 
@@ -56,20 +64,8 @@
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    let userData = { name: '', date: '', time: '' };
+    let selectedData = { name: '', date: '', time: '' };
     let currentMonth = new Date();
-
-    function saveName() {
-        const name = document.getElementById('userNameInput').value.trim();
-        if (name.length < 2) {
-            alert("Пожалуйста, введите корректное имя");
-            return;
-        }
-        userData.name = name;
-        document.getElementById('regPage').classList.remove('active');
-        document.getElementById('bookingPage').classList.add('active');
-        renderCalendar();
-    }
 
     function renderCalendar() {
         const grid = document.getElementById('calendarGrid');
@@ -90,10 +86,9 @@
             else el.onclick = () => {
                 document.querySelectorAll('.day').forEach(i => i.classList.remove('selected'));
                 el.classList.add('selected');
-                userData.date = date.toISOString().split('T')[0];
+                selectedData.date = date.toISOString().split('T')[0];
                 document.getElementById('timeSection').style.display = 'block';
                 renderTime();
-                tg.MainButton.hide();
             };
             grid.appendChild(el);
         }
@@ -102,16 +97,21 @@
     function renderTime() {
         const grid = document.getElementById('timeGrid');
         grid.innerHTML = '';
-        const slots = ["10:00", "12:00", "14:00", "16:00", "18:00", "20:00"];
-        slots.forEach(t => {
+        ["10:00", "12:00", "14:00", "16:00", "18:00"].forEach(t => {
             const slot = document.createElement('div');
             slot.className = 'time-slot';
             slot.innerText = t;
             slot.onclick = () => {
-                userData.time = t;
+                const nameInput = document.getElementById('userName').value.trim();
+                if (!nameInput) {
+                    alert("Пожалуйста, сначала введите ваше имя выше");
+                    return;
+                }
+                selectedData.name = nameInput;
+                selectedData.time = t;
                 document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
                 slot.classList.add('selected');
-                tg.MainButton.setText(`Записаться на ${userData.date} в ${t}`);
+                tg.MainButton.setText(`Записаться: ${t}`);
                 tg.MainButton.show();
             };
             grid.appendChild(slot);
@@ -124,13 +124,10 @@
     }
 
     tg.MainButton.onClick(() => {
-        // Проверка перед отправкой
-        if (userData.name && userData.date && userData.time) {
-            tg.sendData(JSON.stringify(userData));
-        } else {
-            alert("Заполните все данные");
-        }
+        tg.sendData(JSON.stringify(selectedData));
     });
+
+    renderCalendar();
 </script>
 </body>
 </html>
