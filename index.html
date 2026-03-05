@@ -27,32 +27,32 @@
         #reg-screen { position: fixed; top:0; left:0; width:100%; height:100%; background: #000; z-index: 3000; display: none; align-items: center; justify-content: center; }
         #reg-screen.active { display: flex; }
 
-        /* СПРАВОЧНИК СТИЛЕЙ (ГОРИЗОНТАЛЬНЫЙ) */
+        /* СПРАВОЧНИК СТИЛЕЙ */
         .style-scroll { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 10px; scroll-snap-type: x mandatory; }
         .style-card { flex: 0 0 85%; background: rgba(255,255,255,0.05); border-radius: 20px; padding: 20px; scroll-snap-align: center; border: 1px solid rgba(255,255,255,0.05); }
-        .style-card h4 { color: var(--accent); margin: 0 0 10px; text-transform: uppercase; letter-spacing: 1px; }
-        .style-card p { font-size: 13px; opacity: 0.8; line-height: 1.5; margin-bottom: 10px; }
-        .style-card .badge { display: inline-block; padding: 4px 10px; background: var(--gradient); color: #000; border-radius: 8px; font-size: 11px; font-weight: bold; margin-bottom: 10px; }
+        .style-card img { width: 100%; height: 180px; object-fit: cover; border-radius: 15px; margin-bottom: 15px; }
+        .style-card h4 { color: var(--accent); margin: 0 0 10px; text-transform: uppercase; }
+        .style-card p { font-size: 13px; opacity: 0.8; line-height: 1.4; }
+        .scroll-hint { text-align: center; color: var(--accent); font-size: 18px; margin-bottom: 15px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
         /* КНОПКИ */
-        .btn-main { width: 100%; padding: 16px; border-radius: 18px; border: none; background: var(--gradient); color: #000; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; text-transform: uppercase; box-sizing: border-box; }
-        .btn-social { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); margin-bottom: 10px; }
+        .btn-main { width: 100%; padding: 16px; border-radius: 18px; border: none; background: var(--gradient); color: #000; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; text-transform: uppercase; margin-bottom: 10px; }
+        .btn-outline { background: none; border: 1px solid var(--accent); color: var(--accent); }
+        .btn-danger { background: #e74c3c; color: #fff; }
 
-        /* НАВИГАЦИЯ (6 элементов - плотно, но влезут) */
-        .nav { position: fixed; bottom: 10px; left: 2%; width: 96%; height: 70px; background: rgba(0,0,0,0.9); border-radius: 25px; display: flex; justify-content: space-around; align-items: center; border: 1px solid rgba(255,255,255,0.1); z-index: 1000; }
+        /* ТЕКУЩАЯ ЗАПИСЬ */
+        #my-booking-info { border: 2px solid var(--accent); background: rgba(255, 175, 189, 0.1); }
+
+        /* НАВИГАЦИЯ */
+        .nav { position: fixed; bottom: 10px; left: 2%; width: 96%; height: 70px; background: rgba(0,0,0,0.95); border-radius: 25px; display: flex; justify-content: space-around; align-items: center; border: 1px solid rgba(255,255,255,0.1); z-index: 1000; }
         .nav-item { color: #555; text-align: center; font-size: 8px; flex: 1; text-transform: uppercase; font-weight: bold; }
         .nav-item i { font-size: 18px; display: block; margin-bottom: 4px; }
         .nav-item.active { color: var(--accent); }
 
-        /* БЛАГОДАРНОСТЬ ПОСЛЕ ЗАПИСИ */
-        #success-modal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); z-index: 4000; display: none; align-items: center; justify-content: center; text-align: center; }
-        
-        /* ФИКС ВИЗИТА */
-        .visit-box { display: flex; flex-direction: column; gap: 15px; width: 100%; }
-
         .section { display: none; }
-        .section.active { display: block; animation: fadeIn 0.4s; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .section.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         input, textarea { width: 100%; padding: 14px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; color: #fff; margin-bottom: 12px; box-sizing: border-box; }
         
@@ -64,6 +64,8 @@
         .time-slot { padding: 14px; border-radius: 15px; background: rgba(255,255,255,0.03); text-align: center; border: 1px solid rgba(255,255,255,0.1); }
         .time-slot.selected { background: var(--gradient); color: #000; }
         .time-slot.occupied { opacity: 0.2; text-decoration: line-through; pointer-events: none; }
+
+        #success-modal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); z-index: 4000; display: none; align-items: center; justify-content: center; text-align: center; }
     </style>
 </head>
 <body>
@@ -80,10 +82,10 @@
 
 <div id="success-modal">
     <div class="glass" style="width: 80%;">
-        <div style="font-size: 50px; margin-bottom: 20px;">🌸</div>
-        <h2 style="color:var(--accent)">Запись создана!</h2>
+        <div style="font-size: 50px; margin-bottom: 15px;">✨</div>
+        <h2 id="success-title" style="color:var(--accent)">Готово!</h2>
         <p id="success-msg"></p>
-        <button class="btn-main" onclick="document.getElementById('success-modal').style.display='none'">ПРЕКРАСНО</button>
+        <button class="btn-main" onclick="document.getElementById('success-modal').style.display='none'">ОТЛИЧНО</button>
     </div>
 </div>
 
@@ -94,114 +96,92 @@
         <h3 style="color:var(--accent); text-align:center;">ГИД ПО ФОРМАМ 💅</h3>
         <div class="style-scroll">
             <div class="style-card">
-                <span class="badge">ТОП 2026</span>
+                <img src="https://images.unsplash.com/photo-1604654894610-df490651e10c?q=80&w=400">
                 <h4>Мягкий Квадрат</h4>
-                <p><b>Кому:</b> Всем, кто ценит практичность. Идеально для офиса и работы за ПК.</p>
-                <p><b>Плюсы:</b> Самая прочная форма. Углы не скалываются, визуально делает ногтевое ложе шире.</p>
+                <p>Универсальная форма. Углы сглажены, что делает ногти прочными и удобными в быту.</p>
             </div>
             <div class="style-card">
-                <span class="badge">ЭЛЕГАНТНОСТЬ</span>
+                <img src="https://images.unsplash.com/photo-1632345031435-8727f6897d53?q=80&w=400">
                 <h4>Миндаль</h4>
-                <p><b>Кому:</b> Тем, кто хочет визуально удлинить пальцы и сделать кисть изящнее.</p>
-                <p><b>Плюсы:</b> Самая женственная форма. Но требует достаточной длины свободного края.</p>
+                <p>Визуально удлиняет пальцы. Самая женственная и популярная форма в 2026 году.</p>
             </div>
             <div class="style-card">
-                <span class="badge">ДЕРЗОСТЬ</span>
+                <img src="https://images.unsplash.com/photo-1519014816548-bf5fe059798b?q=80&w=400">
                 <h4>Стилет</h4>
-                <p><b>Кому:</b> Для смелых образов и длинных ногтей. Визуально сужает руку.</p>
-                <p><b>Плюсы:</b> Огромное пространство для дизайна. Но самая хрупкая форма в быту.</p>
-            </div>
-            <div class="style-card">
-                <span class="badge">КЛАССИКА</span>
-                <h4>Овал</h4>
-                <p><b>Кому:</b> Для коротких и средних ногтей. Повторяет естественную линию кутикулы.</p>
-                <p><b>Плюсы:</b> Минимум отслоек и максимальный комфорт в носке.</p>
+                <p>Для тех, кто любит длину и внимание. Максимально сужает кисть руки.</p>
             </div>
         </div>
-        <div class="glass" style="margin-top:20px;">
-            <h4 style="color:var(--accent)">Совет по уходу</h4>
-            <p style="font-size:13px; opacity:0.8;">Для любой формы важно увлажнение. Наносите масло для кутикулы на ночь — это предотвращает трещины и заусенцы.</p>
+        <div class="scroll-hint"><i class="fa-solid fa-chevron-right"></i> листайте</div>
+    </div>
+
+    <div id="sec-book" class="section">
+        <div id="my-booking-container"></div>
+
+        <div id="booking-ui">
+            <div class="glass">
+                <h3 id="calendar-title" style="text-align:center; margin-top:0;">ВЫБЕРИТЕ ДАТУ</h3>
+                <div class="cal-grid" id="cal"></div>
+            </div>
+            <div id="time-box" class="glass" style="display:none">
+                <div class="time-grid" id="times"></div>
+                <button id="confirm-btn" class="btn-main" style="display:none; margin-top:20px; background:#21c352; color:#fff" onclick="confirmBooking()">ПОДТВЕРДИТЬ</button>
+            </div>
         </div>
     </div>
 
     <div id="sec-port" class="section">
         <div class="glass">
-            <h3 style="text-align:center; color:var(--accent)">СОЦСЕТИ ✨</h3>
-            <p style="text-align:center; font-size:13px; margin-bottom:20px;">Смотрите мои работы и актуальные окошки здесь:</p>
-            <a href="https://t.me/nailsnastasiakireeva" target="_blank" class="btn-main btn-social"><i class="fa-brands fa-telegram"></i> TELEGRAM КАНАЛ</a>
-            <a href="https://vk.com/nailsnastasiakireeva" target="_blank" class="btn-main btn-social"><i class="fa-brands fa-vk"></i> ВКОНТАКТЕ</a>
+            <h3 style="text-align:center; color:var(--accent)">МОИ РАБОТЫ ✨</h3>
+            <a href="https://t.me/nailsnastasiakireeva" target="_blank" class="btn-main"><i class="fa-brands fa-telegram"></i> TELEGRAM КАНАЛ</a>
+            <a href="https://vk.com/nailsnastasiakireeva" target="_blank" class="btn-main" style="background:#0077ff; color:#fff"><i class="fa-brands fa-vk"></i> ВКОНТАКТЕ</a>
         </div>
     </div>
 
     <div id="sec-revs" class="section">
         <div class="glass">
-            <h3 style="margin-top:0;">ОТЗЫВЫ КЛИЕНТОВ</h3>
+            <h3 style="margin-top:0;">ОТЗЫВЫ</h3>
             <div id="list-reviews"></div>
-            <div style="display:flex; justify-content:center; gap:10px; margin:20px 0;" id="star-rating">
-                <i class="fa-solid fa-star active" data-val="1"></i>
-                <i class="fa-solid fa-star active" data-val="2"></i>
-                <i class="fa-solid fa-star active" data-val="3"></i>
-                <i class="fa-solid fa-star active" data-val="4"></i>
-                <i class="fa-solid fa-star active" data-val="5"></i>
-            </div>
-            <textarea id="rev-text" rows="3" placeholder="Напишите пару слов..."></textarea>
+            <textarea id="rev-text" rows="3" placeholder="Ваш отзыв..."></textarea>
             <button class="btn-main" onclick="postReview()">ОТПРАВИТЬ</button>
         </div>
     </div>
 
-    <div id="sec-book" class="section">
-        <div class="glass">
-            <h3 style="text-align:center; margin-top:0;">МАРТ 2026</h3>
-            <div class="cal-grid" id="cal"></div>
-        </div>
-        <div id="time-box" class="glass" style="display:none">
-            <div class="time-grid" id="times"></div>
-            <button id="confirm-btn" class="btn-main" style="display:none; margin-top:20px; background:#21c352; color:#fff" onclick="confirmBooking()">ЗАПИСАТЬСЯ</button>
-        </div>
-    </div>
-
     <div id="sec-info" class="section">
-        <div class="glass">
-            <img src="https://static-maps.yandex.ru/1.x/?ll=43.231604,50.067513&z=16&l=map&size=450,220&pt=43.231604,50.067513,pm2rdm" style="width:100%; border-radius:15px; margin-bottom:15px;">
-            <div class="visit-box">
-                <div style="text-align:center;">
-                    <p style="margin:0;">г. Михайловка, <b>ул. Республиканская, 71</b></p>
-                    <p style="opacity:0.7; font-size:12px;">ТЦ "Эдельвейс", 2 этаж</p>
-                </div>
-                <a href="tel:+79023611937" class="btn-main" style="background:#21c352; color:white;">
-                    <i class="fa-solid fa-phone"></i> ПОЗВОНИТЬ
-                </a>
-            </div>
+        <div class="glass" style="text-align:center;">
+            <p>г. Михайловка, <b>ул. Республиканская, 71</b></p>
+            <a href="tel:+79023611937" class="btn-main" style="background:#21c352; color:white;">ПОЗВОНИТЬ МАСТЕРУ</a>
         </div>
     </div>
 
     <div id="sec-admin" class="section">
         <div id="adm-login" class="glass">
-            <input type="password" id="adm-pass" placeholder="Код администратора">
+            <input type="password" id="adm-pass" placeholder="Пароль">
             <button class="btn-main" onclick="checkAdm()">ВОЙТИ</button>
         </div>
         <div id="adm-panel" style="display:none">
-            <h4 style="color:var(--accent)">ЖУРНАЛ</h4>
+            <h4 style="color:var(--accent)">ЖУРНАЛ ЗАПИСЕЙ</h4>
             <div id="adm-books-list"></div>
+            <h4 style="color:var(--accent); margin-top:25px;">ОТЗЫВЫ</h4>
+            <div id="adm-revs-list"></div>
         </div>
     </div>
 </div>
 
 <nav class="nav">
     <div class="nav-item active" onclick="tab('sec-style', this)"><i class="fa-solid fa-palette"></i>Стиль</div>
-    <div class="nav-item" onclick="tab('sec-port', this)"><i class="fa-solid fa-images"></i>Работы</div>
-    <div class="nav-item" onclick="tab('sec-revs', this)"><i class="fa-solid fa-heart"></i>Отзывы</div>
-    <div class="nav-item" onclick="tab('sec-book', this)"><i class="fa-solid fa-calendar-alt"></i>Запись</div>
-    <div class="nav-item" onclick="tab('sec-info', this)"><i class="fa-solid fa-map-pin"></i>Визит</div>
+    <div class="nav-item" onclick="tab('sec-book', this)"><i class="fa-solid fa-calendar-check"></i>Запись</div>
+    <div class="nav-item" onclick="tab('sec-port', this)"><i class="fa-solid fa-images"></i>Портфолио</div>
+    <div class="nav-item" onclick="tab('sec-revs', this)"><i class="fa-solid fa-comment"></i>Отзывы</div>
+    <div class="nav-item" onclick="tab('sec-info', this)"><i class="fa-solid fa-map-location"></i>Визит</div>
     <div class="nav-item" onclick="tab('sec-admin', this)"><i class="fa-solid fa-lock"></i>Админ</div>
 </nav>
 
 <script>
     const tg = window.Telegram.WebApp;
-    let selectedDay = null, selectedTime = null, currentRating = 5;
-    let bookings = JSON.parse(localStorage.getItem('nn_books_v10')) || [];
-    let reviews = JSON.parse(localStorage.getItem('nn_revs_v10')) || [];
-    let user = JSON.parse(localStorage.getItem('nn_user_data_v10'));
+    let selectedDay = null, selectedTime = null, editingId = null;
+    let bookings = JSON.parse(localStorage.getItem('nn_books_v11')) || [];
+    let reviews = JSON.parse(localStorage.getItem('nn_revs_v11')) || [];
+    let user = JSON.parse(localStorage.getItem('nn_user_data_v11'));
 
     if(!user) document.getElementById('reg-screen').classList.add('active');
 
@@ -209,10 +189,11 @@
         const fn = document.getElementById('reg-fn').value;
         const ln = document.getElementById('reg-ln').value;
         const ph = document.getElementById('reg-ph').value;
-        if(fn && ln && ph.length > 10) {
+        if(fn && ph.length > 10) {
             user = { fn, ln, ph, username: tg.initDataUnsafe.user?.username || '' };
-            localStorage.setItem('nn_user_data_v10', JSON.stringify(user));
+            localStorage.setItem('nn_user_data_v11', JSON.stringify(user));
             document.getElementById('reg-screen').classList.remove('active');
+            renderMyBooking();
         }
     }
 
@@ -221,33 +202,45 @@
         document.getElementById(id).classList.add('active');
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
         el.classList.add('active');
-        if(id === 'sec-book') renderCal();
-        if(id === 'sec-revs') renderRevs();
+        if(id === 'sec-book') { renderMyBooking(); renderCal(); }
         if(id === 'sec-admin') renderAdmin();
+        if(id === 'sec-revs') renderRevs();
     }
 
-    // ЗВЕЗДЫ
-    document.querySelectorAll('#star-rating i').forEach(s => {
-        s.onclick = () => {
-            currentRating = s.dataset.val;
-            document.querySelectorAll('#star-rating i').forEach(x => {
-                x.classList.toggle('active', x.dataset.val <= currentRating);
-                x.style.color = x.dataset.val <= currentRating ? '#ffd700' : '#333';
-            });
+    // ЛОГИКА ЗАПИСИ
+    function renderMyBooking() {
+        const container = document.getElementById('my-booking-container');
+        const myBook = bookings.find(b => b.user.ph === user.ph);
+        
+        if(myBook && !editingId) {
+            container.innerHTML = `
+                <div class="glass" id="my-booking-info">
+                    <h4 style="margin:0; color:var(--accent)">Ваша запись:</h4>
+                    <p style="font-size:18px; font-weight:bold; margin:10px 0;">${myBook.day} марта в ${myBook.time}</p>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn-main btn-outline" style="flex:1" onclick="startEdit('${myBook.id}')">ИЗМЕНИТЬ</button>
+                        <button class="btn-main btn-danger" style="flex:1" onclick="cancelBooking('${myBook.id}')">ОТМЕНИТЬ</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('booking-ui').style.display = 'none';
+        } else {
+            container.innerHTML = '';
+            document.getElementById('booking-ui').style.display = 'block';
+            if(editingId) document.getElementById('calendar-title').innerText = "ВЫБЕРИТЕ НОВОЕ ВРЕМЯ";
         }
-    });
+    }
 
     function renderCal() {
         const c = document.getElementById('cal'); c.innerHTML = '';
         const today = new Date().getDate();
         for(let i=1; i<=31; i++) {
             const d = document.createElement('div');
-            d.className = 'day' + (i < today ? ' disabled' : '');
+            d.className = 'day' + (i < today ? ' disabled' : '') + (i === selectedDay ? ' selected' : '');
             d.innerText = i;
             d.onclick = () => {
                 selectedDay = i;
-                document.querySelectorAll('.day').forEach(x => x.classList.remove('selected'));
-                d.classList.add('selected');
+                renderCal();
                 document.getElementById('time-box').style.display = 'block';
                 renderTimes(i);
             };
@@ -257,18 +250,17 @@
 
     function renderTimes(day) {
         const tDiv = document.getElementById('times'); tDiv.innerHTML = '';
-        const slots = ["12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00"];
-        const occupied = bookings.filter(b => b.day == day).map(b => b.time);
+        const slots = ["10:00","12:00","14:00","16:00","18:00","20:00"];
+        const occupied = bookings.filter(b => b.day == day && b.id !== editingId).map(b => b.time);
         slots.forEach(t => {
             const s = document.createElement('div');
             const isBusy = occupied.includes(t);
-            s.className = 'time-slot' + (isBusy ? ' occupied' : '');
-            s.innerText = isBusy ? t + ' (Занято)' : t;
+            s.className = 'time-slot' + (isBusy ? ' occupied' : '') + (t === selectedTime ? ' selected' : '');
+            s.innerText = t;
             if(!isBusy) {
                 s.onclick = () => {
                     selectedTime = t;
-                    document.querySelectorAll('.time-slot').forEach(x => x.classList.remove('selected'));
-                    s.classList.add('selected');
+                    renderTimes(day);
                     document.getElementById('confirm-btn').style.display = 'flex';
                 };
             }
@@ -277,33 +269,75 @@
     }
 
     function confirmBooking() {
-        const bobj = { id: Date.now(), day: selectedDay, time: selectedTime, user: user };
-        bookings.push(bobj);
-        localStorage.setItem('nn_books_v10', JSON.stringify(bookings));
-        
-        document.getElementById('success-msg').innerText = `${user.fn}, жду Вас ${selectedDay} марта в ${selectedTime}!`;
-        document.getElementById('success-modal').style.display = 'flex';
-        document.getElementById('time-box').style.display = 'none';
+        if(editingId) {
+            const idx = bookings.findIndex(b => b.id === editingId);
+            bookings[idx].day = selectedDay;
+            bookings[idx].time = selectedTime;
+            sendNotification('change', bookings[idx]);
+            editingId = null;
+        } else {
+            const bobj = { id: Date.now().toString(), day: selectedDay, time: selectedTime, user: user };
+            bookings.push(bobj);
+            sendNotification('new', bobj);
+        }
+        localStorage.setItem('nn_books_v11', bookings.length ? JSON.stringify(bookings) : '[]');
+        showSuccess("Запись подтверждена!");
+        renderMyBooking();
     }
 
-    function postReview() {
-        const txt = document.getElementById('rev-text').value;
-        if(txt) {
-            reviews.unshift({ id: Date.now(), user: user, text: txt, stars: currentRating });
-            localStorage.setItem('nn_revs_v10', JSON.stringify(reviews));
-            document.getElementById('rev-text').value = '';
-            renderRevs();
+    function startEdit(id) {
+        editingId = id;
+        const b = bookings.find(x => x.id === id);
+        selectedDay = b.day;
+        selectedTime = b.time;
+        renderMyBooking();
+        renderCal();
+    }
+
+    function cancelBooking(id) {
+        const b = bookings.find(x => x.id === id);
+        if(confirm("Вы уверены, что хотите отменить запись?")) {
+            sendNotification('cancel', b);
+            bookings = bookings.filter(x => x.id !== id);
+            localStorage.setItem('nn_books_v11', JSON.stringify(bookings));
+            editingId = null;
+            renderMyBooking();
         }
     }
 
-    function renderRevs() {
-        document.getElementById('list-reviews').innerHTML = reviews.map(r => `
-            <div class="glass" style="margin-bottom:12px; background:rgba(255,255,255,0.06); padding:15px; border-radius:15px;">
-                <div style="color:#ffd700; font-size:10px; margin-bottom:5px;">${'★'.repeat(r.stars)}</div>
-                <b style="color:var(--accent); font-size:13px;">${r.user.fn} ${r.user.ln}</b>
-                <p style="margin:5px 0 0; font-size:12px; opacity:0.9;">${r.text}</p>
+    function sendNotification(type, data) {
+        const msg = {
+            type: type, // 'new', 'change', 'cancel'
+            client: `${data.user.fn} ${data.user.ln}`,
+            phone: data.user.ph,
+            date: `${data.day}.03`,
+            time: data.time
+        };
+        // Отправка данных боту
+        tg.sendData(JSON.stringify(msg));
+    }
+
+    function showSuccess(text) {
+        document.getElementById('success-msg').innerText = text;
+        document.getElementById('success-modal').style.display = 'flex';
+    }
+
+    // АДМИНКА
+    function renderAdmin() {
+        document.getElementById('adm-books-list').innerHTML = bookings.map(b => `
+            <div class="glass" style="font-size:13px; background:rgba(0,0,0,0.8);">
+                <b>${b.day}.03 | ${b.time}</b> — ${b.user.fn}<br>
+                <div style="margin-top:10px; display:flex; gap:5px;">
+                    <button class="btn-main" style="height:30px; font-size:10px; flex:1" onclick="startEditAdmin('${b.id}')">ИЗМЕНИТЬ</button>
+                    <button class="btn-main btn-danger" style="height:30px; font-size:10px; flex:1" onclick="cancelBooking('${b.id}')">ОТМЕНА</button>
+                </div>
             </div>
         `).join('');
+    }
+
+    function startEditAdmin(id) {
+        tab('sec-book', document.querySelectorAll('.nav-item')[1]);
+        startEdit(id);
     }
 
     function checkAdm() {
@@ -314,20 +348,25 @@
         }
     }
 
-    function renderAdmin() {
-        document.getElementById('adm-books-list').innerHTML = bookings.map(b => `
-            <div class="glass" style="font-size:12px; background:rgba(0,0,0,0.8);">
-                <b>${b.day}.03 | ${b.time}</b><br>Клиент: ${b.user.fn} ${b.user.ln}<br>
-                <div style="margin-top:10px; display:flex; gap:8px;">
-                    ${b.user.username ? `<a href="https://t.me/${b.user.username}" target="_blank" class="btn-main" style="height:35px; font-size:10px; background:#0088cc; color:#fff">ТГ</a>` : ''}
-                    <a href="tel:${b.user.ph}" class="btn-main" style="height:35px; font-size:10px; background:#21c352; color:#fff">ВЫЗОВ</a>
-                    <button onclick="delBook(${b.id})" class="btn-main" style="height:35px; font-size:10px; background:#e74c3c; color:#fff">DEL</button>
-                </div>
+    // ОТЗЫВЫ
+    function postReview() {
+        const txt = document.getElementById('rev-text').value;
+        if(txt) {
+            reviews.unshift({ id: Date.now(), user, text: txt });
+            localStorage.setItem('nn_revs_v11', JSON.stringify(reviews));
+            document.getElementById('rev-text').value = '';
+            renderRevs();
+        }
+    }
+
+    function renderRevs() {
+        document.getElementById('list-reviews').innerHTML = reviews.map(r => `
+            <div class="glass" style="margin-bottom:10px; background:rgba(255,255,255,0.05); padding:15px;">
+                <b style="color:var(--accent)">${r.user.fn}</b>
+                <p style="margin:5px 0; font-size:13px;">${r.text}</p>
             </div>
         `).join('');
     }
-
-    window.delBook = (id) => { bookings = bookings.filter(x => x.id !== id); localStorage.setItem('nn_books_v10', JSON.stringify(bookings)); renderAdmin(); };
 
     renderRevs();
 </script>
