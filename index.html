@@ -7,92 +7,144 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --accent: #ffafbd; --glass: rgba(255, 255, 255, 0.1); --bg: #0d0d0d; --gradient: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%); }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; padding-bottom: 100px; }
+        :root { --accent: #ffafbd; --glass: rgba(255, 255, 255, 0.08); --bg: #0d0d0d; --gradient: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%); }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; padding-bottom: 90px; overflow-x: hidden; }
         .container { padding: 15px; max-width: 500px; margin: auto; }
-        .brand { text-align: center; font-family: 'Georgia', serif; font-size: 24px; color: var(--accent); margin: 15px 0; }
-        
         .glass { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 15px; margin-bottom: 15px; }
+        
+        /* РЕГИСТРАЦИЯ */
+        #reg-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 2000; display: flex; align-items: center; justify-content: center; visibility: hidden; }
+        #reg-screen.active { visibility: visible; }
 
-        .btn-main { width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--gradient); color: #000; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; text-decoration: none; }
-        .btn-call { background: #28a745; color: white; }
-        .btn-chat { background: #0088cc; color: white; padding: 6px 12px; font-size: 11px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+        /* ТРЕНДЫ */
+        .trend-card { background: rgba(255,255,255,0.03); border-radius: 15px; overflow: hidden; margin-bottom: 15px; border: 1px solid rgba(255,175,189,0.1); }
+        .trend-img { width: 100%; height: 150px; object-fit: cover; }
+        .trend-content { padding: 12px; }
+        .trend-content h4 { margin: 0 0 5px; color: var(--accent); }
 
+        /* КАЛЕНДАРЬ И ВРЕМЯ */
         .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
         .day { padding: 10px 0; border-radius: 8px; cursor: pointer; text-align: center; font-size: 13px; }
         .day.disabled { opacity: 0.2; pointer-events: none; text-decoration: line-through; }
         .day.selected { background: var(--gradient); color: #000; font-weight: bold; }
+        .time-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 
-        .nav { position: fixed; bottom: 10px; left: 5%; width: 90%; height: 65px; background: rgba(15,15,15,0.98); border-radius: 18px; display: flex; justify-content: space-around; align-items: center; border: 1px solid rgba(255,255,255,0.1); z-index: 1000; }
-        .nav-item { color: #555; text-align: center; font-size: 9px; flex: 1; }
+        /* НАВИГАЦИЯ */
+        .nav { position: fixed; bottom: 10px; left: 2%; width: 96%; height: 65px; background: rgba(15,15,15,0.98); border-radius: 18px; display: flex; justify-content: space-around; align-items: center; border: 1px solid rgba(255,255,255,0.1); z-index: 1000; }
+        .nav-item { color: #555; text-align: center; font-size: 8px; flex: 1; text-transform: uppercase; }
         .nav-item i { font-size: 18px; display: block; margin-bottom: 3px; }
         .nav-item.active { color: var(--accent); }
 
         .section { display: none; }
-        .section.active { display: block; animation: fadeIn 0.3s ease; }
+        .section.active { display: block; animation: fadeIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        input, textarea { width: 100%; padding: 12px; background: #000; border: 1px solid #333; border-radius: 12px; color: #fff; margin-bottom: 8px; box-sizing: border-box; }
-        .admin-item { padding: 12px; border-bottom: 1px solid #222; }
+        .btn-main { width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--gradient); color: #000; font-weight: bold; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        input, textarea { width: 100%; padding: 12px; background: #000; border: 1px solid #333; border-radius: 12px; color: #fff; margin-bottom: 10px; }
+        
+        .admin-card { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px; margin-bottom: 10px; font-size: 12px; border-left: 3px solid var(--accent); }
     </style>
 </head>
 <body>
+
+    <div id="reg-screen">
+        <div class="glass" style="width: 80%;">
+            <h3 style="text-align:center; color:var(--accent)">Регистрация</h3>
+            <input id="reg-fn" placeholder="Имя">
+            <input id="reg-ln" placeholder="Фамилия">
+            <input id="reg-ph" type="tel" placeholder="+7 (___) ___ - __ - __">
+            <button class="btn-main" onclick="saveUser()">НАЧАТЬ</button>
+        </div>
+    </div>
+
     <div class="container">
-        <div class="brand">NASTASIA_NAILSS</div>
+        <h2 style="text-align:center; font-family:Georgia; color:var(--accent)">NASTASIA_NAILSS</h2>
 
         <div id="sec-style" class="section active">
+            <div class="trend-card">
+                <img src="https://images.unsplash.com/photo-1632345031435-8727f6897d53?w=500" class="trend-img">
+                <div class="trend-content">
+                    <h4>Тренд 2026: "Жидкое серебро"</h4>
+                    <p style="font-size:12px; opacity:0.7">Металлические втирки и объемные 3D-капли возвращаются в новом прочтении.</p>
+                </div>
+            </div>
             <div class="glass">
-                <div style="width:100%; height:130px; border-radius:15px; background: url('https://static-maps.yandex.ru/1.x/?ll=43.231604,50.067513&z=17&l=map&size=450,150&pt=43.231604,50.067513,pm2rdm') center/cover; margin-bottom:12px;"></div>
-                <p style="font-size:13px;">📍 Михайловка, Республиканская, 71. 2 этаж.</p>
-                <a href="tel:+79023611937" class="btn-main btn-call"><i class="fa-solid fa-phone"></i> ПОЗВОНИТЬ</a>
+                <h4>✨ Рекомендации по уходу</h4>
+                <p style="font-size:12px; opacity:0.8; line-height:1.5">• Используйте масло для кутикулы ежедневно.<br>• Надевайте перчатки при уборке с химией.<br>• Не подпиливайте углы самостоятельно.</p>
             </div>
         </div>
 
-        <div id="sec-port" class="section">
+        <div id="sec-revs" class="section">
             <div class="glass">
-                <h3>Отзывы ✨</h3>
-                <div id="user-reviews"></div>
-                <input id="rev-n" placeholder="Имя">
-                <textarea id="rev-t" placeholder="Отзыв..."></textarea>
-                <button class="btn-main" onclick="addRev()">ОТПРАВИТЬ</button>
+                <div id="list-reviews"></div>
+                <hr style="opacity:0.1; margin:15px 0">
+                <textarea id="rev-text" placeholder="Ваш отзыв..."></textarea>
+                <button class="btn-main" onclick="postReview()">ОТПРАВИТЬ</button>
             </div>
         </div>
 
         <div id="sec-book" class="section">
             <div class="glass">
-                <h3 style="text-align:center;">Март 2026</h3>
+                <h3 id="cal-title" style="text-align:center; margin-top:0">Март 2026</h3>
                 <div class="cal-grid" id="cal"></div>
             </div>
             <div id="time-box" class="glass" style="display:none">
-                <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:8px" id="times"></div>
+                <div class="time-grid" id="times"></div>
+            </div>
+        </div>
+
+        <div id="sec-info" class="section">
+            <div class="glass">
+                <h3>Где мы? 📍</h3>
+                <p>г. Михайловка, ул. Республиканская, 71<br><b>ТЦ "Эдельвейс", 2 этаж</b></p>
+                <a href="https://yandex.ru/maps/-/CCU8F-YpXD" target="_blank" class="btn-main">КАРТА ПРОЕЗДА</a>
+            </div>
+            <div class="glass">
+                <h3>Связь 📞</h3>
+                <a href="tel:+79023611937" class="btn-main" style="background:#28a745; color:#fff">ПОЗВОНИТЬ МАСТЕРУ</a>
             </div>
         </div>
 
         <div id="sec-admin" class="section">
-            <div id="admin-auth" class="glass">
-                <input type="password" id="adm-pass" placeholder="Пароль">
-                <button class="btn-main" onclick="auth()">ВОЙТИ</button>
+            <div id="adm-login" class="glass">
+                <input type="password" id="adm-pass" placeholder="Код доступа">
+                <button class="btn-main" onclick="checkAdm()">ВОЙТИ</button>
             </div>
-            <div id="admin-panel" style="display:none">
-                <div class="glass">
-                    <h4 style="color:var(--accent)">ЖУРНАЛ ЗАПИСЕЙ</h4>
-                    <div id="adm-books"></div>
-                </div>
+            <div id="adm-panel" style="display:none">
+                <h4>Журнал записей</h4>
+                <div id="adm-books-list"></div>
+                <h4 style="margin-top:20px">Отзывы</h4>
+                <div id="adm-revs-list"></div>
             </div>
         </div>
     </div>
 
     <nav class="nav">
-        <div class="nav-item active" onclick="tab('sec-style', this)"><i class="fa-solid fa-house"></i><span>Стиль</span></div>
-        <div class="nav-item" onclick="tab('sec-port', this)"><i class="fa-solid fa-heart"></i><span>Отзывы</span></div>
-        <div class="nav-item" onclick="tab('sec-book', this)"><i class="fa-solid fa-calendar-alt"></i><span>Визит</span></div>
-        <div class="nav-item" onclick="tab('sec-admin', this)"><i class="fa-solid fa-user-shield"></i><span>Админ</span></div>
+        <div class="nav-item active" onclick="tab('sec-style', this)"><i class="fa-solid fa-wand-sparkles"></i>Стиль</div>
+        <div class="nav-item" onclick="tab('sec-revs', this)"><i class="fa-solid fa-star"></i>Отзывы</div>
+        <div class="nav-item" onclick="tab('sec-book', this)"><i class="fa-solid fa-calendar-check"></i>Запись</div>
+        <div class="nav-item" onclick="tab('sec-info', this)"><i class="fa-solid fa-location-dot"></i>Визит</div>
+        <div class="nav-item" onclick="tab('sec-admin', this)"><i class="fa-solid fa-crown"></i>Админ</div>
     </nav>
 
 <script>
     const tg = window.Telegram.WebApp;
-    let reviews = JSON.parse(localStorage.getItem('nn_revs_v4')) || [];
-    let bookings = JSON.parse(localStorage.getItem('nn_books_v4')) || [];
+    let currentUser = JSON.parse(localStorage.getItem('nn_user'));
+    let bookings = JSON.parse(localStorage.getItem('nn_books_v5')) || [];
+    let reviews = JSON.parse(localStorage.getItem('nn_revs_v5')) || [];
+
+    if(!currentUser) document.getElementById('reg-screen').classList.add('active');
+
+    function saveUser() {
+        const fn = document.getElementById('reg-fn').value;
+        const ln = document.getElementById('reg-ln').value;
+        const ph = document.getElementById('reg-ph').value;
+        if(fn && ph) {
+            currentUser = { fn, ln, ph, username: tg.initDataUnsafe.user?.username || '' };
+            localStorage.setItem('nn_user', JSON.stringify(currentUser));
+            document.getElementById('reg-screen').classList.remove('active');
+        }
+    }
 
     function tab(id, el) {
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -100,10 +152,11 @@
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
         el.classList.add('active');
         if(id === 'sec-book') renderCal();
-        if(id === 'sec-admin') renderAdmin();
+        if(id === 'sec-revs') renderRevs();
+        if(id === 'sec-admin' && document.getElementById('adm-panel').style.display !== 'none') renderAdmin();
     }
 
-    // ЗАПИСЬ
+    // ЗАПИСЬ (12:00 - 19:00)
     function renderCal() {
         const c = document.getElementById('cal'); c.innerHTML = '';
         const today = new Date().getDate();
@@ -116,69 +169,82 @@
                 d.classList.add('selected');
                 document.getElementById('time-box').style.display = 'block';
                 renderTimes(i);
-            };
+            }
             c.appendChild(d);
         }
     }
 
     function renderTimes(day) {
         const tDiv = document.getElementById('times'); tDiv.innerHTML = '';
-        ["12:00","14:00","16:00","18:00"].forEach(t => {
+        const slots = ["12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00"];
+        slots.forEach(t => {
             const b = document.createElement('div');
             b.className = 'day'; b.style.border = '1px solid #333'; b.innerText = t;
             b.onclick = () => {
-                const user = tg.initDataUnsafe.user;
-                const book = {
-                    id: Date.now(), 
-                    day: day, 
-                    time: t, 
-                    name: user?.first_name || 'Гость', 
-                    username: user?.username || '' 
-                };
-                bookings.push(book);
-                localStorage.setItem('nn_books_v4', JSON.stringify(bookings));
-                tg.sendData(JSON.stringify({type: 'booking', data: book}));
-                tg.showAlert(`Готово! Жду Вас ${day}.03 в ${t}`);
-            };
+                const bobj = { id: Date.now(), day, time: t, user: currentUser };
+                bookings.push(bobj);
+                localStorage.setItem('nn_books_v5', JSON.stringify(bookings));
+                tg.sendData(JSON.stringify({type:'book', data: bobj}));
+                tg.showAlert(`Запись на ${day}.03 в ${t} создана!`);
+            }
             tDiv.appendChild(b);
         });
     }
 
+    // ОТЗЫВЫ
+    function postReview() {
+        const txt = document.getElementById('rev-text').value;
+        if(txt) {
+            reviews.unshift({ id: Date.now(), user: currentUser, text: txt });
+            localStorage.setItem('nn_revs_v5', JSON.stringify(reviews));
+            document.getElementById('rev-text').value = '';
+            renderRevs();
+        }
+    }
+    function renderRevs() {
+        document.getElementById('list-reviews').innerHTML = reviews.map(r => `
+            <div class="admin-card"><b>${r.user.fn} ${r.user.ln}</b><br>${r.text}</div>
+        `).join('');
+    }
+
     // АДМИНКА
-    function auth() {
+    function checkAdm() {
         if(document.getElementById('adm-pass').value === '7777') {
-            document.getElementById('admin-auth').style.display = 'none';
-            document.getElementById('admin-panel').style.display = 'block';
+            document.getElementById('adm-login').style.display = 'none';
+            document.getElementById('adm-panel').style.display = 'block';
             renderAdmin();
         }
     }
 
     function renderAdmin() {
-        document.getElementById('adm-books').innerHTML = bookings.map(b => `
-            <div class="admin-item">
-                <div style="margin-bottom:8px">
-                    <b>${b.day}.03 | ${b.time}</b> — ${b.name}
-                </div>
-                <div style="display:flex; gap:10px; align-items:center">
-                    ${b.username ? 
-                        `<a href="https://t.me/${b.username}" target="_blank" class="btn-chat">
-                            <i class="fa-brands fa-telegram"></i> НАПИСАТЬ
-                         </a>` : 
-                        `<span style="font-size:10px; opacity:0.5">Личка скрыта</span>`
-                    }
-                    <i class="fa-solid fa-trash" style="color:red; margin-left:auto" onclick="delBook(${b.id})"></i>
+        document.getElementById('adm-books-list').innerHTML = bookings.map(b => `
+            <div class="admin-card">
+                <b>${b.day}.03 | ${b.time}</b><br>${b.user.fn} (${b.user.ph})
+                <div style="margin-top:8px; display:flex; gap:5px">
+                    <button onclick="editBook(${b.id})">ИЗМЕНИТЬ</button>
+                    <button onclick="delBook(${b.id})" style="color:red">УДАЛИТЬ</button>
+                    ${b.user.username ? `<a href="https://t.me/${b.user.username}" target="_blank">ЧАТ</a>` : ''}
                 </div>
             </div>
         `).join('');
+
+        document.getElementById('adm-revs-list').innerHTML = reviews.map(r => `
+            <div class="admin-card">${r.user.fn}: ${r.text} <button onclick="delRev(${r.id})">УДАЛИТЬ</button></div>
+        `).join('');
     }
 
-    window.delBook = (id) => {
-        bookings = bookings.filter(x => x.id !== id);
-        localStorage.setItem('nn_books_v4', JSON.stringify(bookings));
-        renderAdmin();
+    window.delBook = (id) => { bookings = bookings.filter(x => x.id !== id); localStorage.setItem('nn_books_v5', JSON.stringify(bookings)); renderAdmin(); };
+    window.delRev = (id) => { reviews = reviews.filter(x => x.id !== id); localStorage.setItem('nn_revs_v5', JSON.stringify(reviews)); renderAdmin(); renderRevs(); };
+    window.editBook = (id) => {
+        const newT = prompt("Новое время (12:00-19:00):");
+        if(newT) {
+            let b = bookings.find(x => x.id === id);
+            b.time = newT;
+            localStorage.setItem('nn_books_v5', JSON.stringify(bookings));
+            tg.sendData(JSON.stringify({type:'edit_book', data: b}));
+            renderAdmin();
+        }
     };
-
-    function addRev() { /* Логика отзывов остается прежней */ }
 </script>
 </body>
 </html>
