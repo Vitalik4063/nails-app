@@ -7,220 +7,215 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --accent: #ffafbd; --glass: rgba(15, 15, 15, 0.95); --gradient: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%); }
+        :root { --accent: #ffafbd; --glass: rgba(15,15,15,0.98); --gradient: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%); }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Segoe UI', sans-serif; background: #000 url('https://images.unsplash.com/photo-1610992015762-43d047385960?q=80&w=1974') no-repeat center center fixed; background-size: cover; color: #fff; margin: 0; padding-bottom: 110px; }
+        body { font-family: 'Segoe UI', sans-serif; background: #000; color: #fff; margin: 0; padding-bottom: 100px; }
         .container { padding: 15px; max-width: 500px; margin: auto; }
-        .glass { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 25px; padding: 20px; margin-bottom: 20px; }
-        .style-scroll { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 10px; scroll-snap-type: x mandatory; }
-        .style-card { flex: 0 0 85%; background: rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; scroll-snap-align: center; border: 1px solid rgba(255,255,255,0.1); }
-        .style-card img { width: 100%; height: 230px; object-fit: cover; border-radius: 15px; margin-bottom: 12px; background: #222; }
-        .btn-main { width: 100%; padding: 16px; border-radius: 18px; border: none; background: var(--gradient); color: #000; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; text-transform: uppercase; margin-bottom: 10px; }
-        .btn-danger { background: #ff4d4d; color: #fff; }
-        .nav { position: fixed; bottom: 15px; left: 3%; width: 94%; height: 70px; background: rgba(0,0,0,0.95); border-radius: 25px; display: flex; justify-content: space-around; align-items: center; border: 1px solid rgba(255,255,255,0.1); z-index: 1000; }
-        .nav-item { color: #555; text-align: center; font-size: 9px; flex: 1; text-transform: uppercase; font-weight: bold; }
+        .glass { background: var(--glass); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 20px; margin-bottom: 15px; }
+        .img-box { width: 100%; height: 220px; object-fit: cover; border-radius: 15px; border: 1px solid #333; margin-bottom: 5px; }
+        .btn { width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; }
+        .btn-main { background: var(--gradient); color: #000; }
+        .btn-vk { background: #4C75A3; color: #fff; }
+        .btn-tg { background: #229ED9; color: #fff; }
+        .nav { position: fixed; bottom: 10px; left: 5%; width: 90%; height: 65px; background: #111; border-radius: 20px; display: flex; justify-content: space-around; align-items: center; z-index: 1000; border: 1px solid #333; }
+        .nav-item { color: #666; font-size: 20px; flex: 1; text-align: center; }
         .nav-item.active { color: var(--accent); }
         .section { display: none; }
         .section.active { display: block; }
-        input, textarea { width: 100%; padding: 14px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; color: #fff; margin-bottom: 12px; }
-        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
-        .day { padding: 12px 0; border-radius: 12px; cursor: pointer; text-align: center; background: rgba(255,255,255,0.05); }
-        .day.selected { background: var(--gradient); color: #000; }
-        .day.disabled { opacity: 0.1; pointer-events: none; }
-        .time-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
-        .time-slot { padding: 14px; border-radius: 15px; background: rgba(255,255,255,0.03); text-align: center; border: 1px solid rgba(255,255,255,0.1); }
-        .time-slot.selected { background: var(--gradient); color: #000; }
-        #reg-screen { position: fixed; top:0; left:0; width:100%; height:100%; background: #000; z-index: 3000; display: none; align-items: center; justify-content: center; }
+        input, textarea { width: 100%; padding: 15px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #333; background: #111; color: #fff; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+        .day { padding: 10px 0; text-align: center; background: #222; border-radius: 5px; cursor: pointer; }
+        .day.selected { background: var(--accent); color: #000; }
+        #reg-screen { position: fixed; inset: 0; background: #000; z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px; }
         #reg-screen.active { display: flex; }
+        #success-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 6000; display: none; align-items: center; justify-content: center; text-align: center; flex-direction: column; }
     </style>
 </head>
 <body>
 
 <div id="reg-screen">
-    <div class="glass" style="width: 85%;">
-        <h3 style="text-align:center; color:var(--accent);">РЕГИСТРАЦИЯ</h3>
+    <div class="glass" style="width: 100%;">
+        <h2 style="text-align:center; color:var(--accent)">РЕГИСТРАЦИЯ</h2>
         <input id="reg-fn" placeholder="Имя">
+        <input id="reg-ln" placeholder="Фамилия">
         <input id="reg-ph" type="tel" value="+7">
-        <button class="btn-main" onclick="saveUser()">ВОЙТИ</button>
+        <button class="btn btn-main" onclick="saveUser()">СОХРАНИТЬ</button>
     </div>
+</div>
+
+<div id="success-overlay">
+    <h1 style="font-size:60px">💖</h1>
+    <h2 style="color:var(--accent)">ВЫ ЗАПИСАНЫ!</h2>
+    <p id="success-text" style="padding:20px;"></p>
+    <button class="btn btn-main" style="width:200px" onclick="document.getElementById('success-overlay').style.display='none'">УРА!</button>
 </div>
 
 <div class="container">
     <div id="sec-style" class="section active">
-        <div class="style-scroll">
-            <div class="style-card">
-                <img src="https://images.unsplash.com/photo-1632345031435-8727f6897d53?w=600">
-                <h4>Миндаль</h4>
-            </div>
-            <div class="style-card">
-                <img src="https://images.unsplash.com/photo-1604654894610-df490651e10c?w=600">
-                <h4>Мягкий Квадрат</h4>
-            </div>
+        <h3 style="color:var(--accent)">ПОРТФОЛИО & СОЦСЕТИ</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <img class="img-box" src="https://images.unsplash.com/photo-1632345031435-8727f6897d53?w=300">
+            <img class="img-box" src="https://images.unsplash.com/photo-1604654894610-df490651e10c?w=300">
+        </div>
+        
+        <div class="glass">
+            <a href="https://t.me/nailsnastasiakireeva" class="btn btn-tg"><i class="fa-brands fa-telegram"></i> Телеграм Канал</a>
+            <a href="https://vk.com/nastasia_nails0" class="btn btn-vk"><i class="fa-brands fa-vk"></i> ВКонтакте</a>
         </div>
     </div>
 
     <div id="sec-book" class="section">
-        <div id="my-booking-status" style="display:none;" class="glass">
-            <p id="my-book-text"></p>
-            <button class="btn-main" onclick="startEdit()">ИЗМЕНИТЬ</button>
-            <button class="btn-main btn-danger" onclick="cancelBooking()">ОТМЕНИТЬ</button>
+        <div id="status-card" class="glass" style="display:none">
+            <h4>Ваша активная запись:</h4>
+            <p id="status-info" style="font-size:20px; font-weight:bold; color:var(--accent)"></p>
+            <button class="btn btn-danger" onclick="cancelBook()">ОТМЕНИТЬ ЗАПИСЬ</button>
         </div>
-        <div id="booking-ui">
-            <div class="glass"><div class="cal-grid" id="cal"></div></div>
-            <div id="time-box" class="glass" style="display:none">
-                <div class="time-grid" id="times"></div>
-                <button id="confirm-btn" class="btn-main" style="display:none" onclick="confirmBooking()">ПОДТВЕРДИТЬ</button>
+        <div id="booking-controls">
+            <div class="glass">
+                <h4>ВЫБЕРИТЕ ДАТУ</h4>
+                <div class="cal-grid" id="cal"></div>
+            </div>
+            <div id="time-selector" class="glass" style="display:none">
+                <div id="times-list" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"></div>
             </div>
         </div>
     </div>
 
     <div id="sec-revs" class="section">
         <div class="glass">
-            <textarea id="rev-text" placeholder="Твой отзыв..."></textarea>
-            <button class="btn-main" onclick="postReview()">ОТПРАВИТЬ</button>
+            <h4>ОТЗЫВ</h4>
+            <input id="rev-stars" type="number" min="1" max="5" placeholder="Оценка (1-5)">
+            <textarea id="rev-text" placeholder="Ваш отзыв..."></textarea>
+            <button class="btn btn-main" onclick="sendReview()">ОТПРАВИТЬ</button>
         </div>
-        <div id="list-reviews"></div>
+        <div id="all-reviews"></div>
     </div>
 
-    <div id="sec-admin" class="section">
-        <div id="adm-login" class="glass">
-            <input type="password" id="adm-pass" placeholder="Пароль">
-            <button class="btn-main" onclick="checkAdm()">ВОЙТИ</button>
+    <div id="sec-map" class="section">
+        <div class="glass">
+            <h3 style="color:var(--accent)">ГДЕ Я НАХОЖУСЬ</h3>
+            <p><i class="fa-solid fa-location-dot"></i> Михайловка, Волгоградская обл.</p>
+            <p>ул. Республиканская 71, 2 этаж "Эдельвейса"</p>
+            <p><i class="fa-solid fa-phone"></i> +7 (902) 361-19-37</p>
         </div>
-        <div id="adm-panel" style="display:none">
-            <div id="adm-books-list"></div>
+        <div id="admin-panel" style="display:none">
+            <h3 style="color:var(--accent)">АДМИН: БАЗА ЗАПИСЕЙ</h3>
+            <div id="admin-data"></div>
         </div>
     </div>
 </div>
 
 <nav class="nav">
-    <div class="nav-item active" onclick="tab('sec-style', this)"><i class="fa-solid fa-palette"></i></div>
-    <div class="nav-item" onclick="tab('sec-book', this)"><i class="fa-solid fa-calendar"></i></div>
+    <div class="nav-item active" onclick="tab('sec-style', this)"><i class="fa-solid fa-camera"></i></div>
+    <div class="nav-item" onclick="tab('sec-book', this)"><i class="fa-solid fa-calendar-alt"></i></div>
     <div class="nav-item" onclick="tab('sec-revs', this)"><i class="fa-solid fa-star"></i></div>
-    <div class="nav-item" onclick="tab('sec-admin', this)"><i class="fa-solid fa-lock"></i></div>
+    <div class="nav-item" onclick="tab('sec-map', this)"><i class="fa-solid fa-map-marker-alt"></i></div>
 </nav>
 
 <script>
     const tg = window.Telegram.WebApp;
-    const ADMIN_IDS = [12345678, 87654321]; // СЮДА СВОИ ID
-    let selectedDay = null, selectedTime = null, editId = null;
-    let bookings = JSON.parse(localStorage.getItem('nn_v5_books')) || [];
-    let reviews = JSON.parse(localStorage.getItem('nn_v5_revs')) || [];
-    let user = JSON.parse(localStorage.getItem('nn_v5_user'));
+    const MY_ID = 5742846099;
+    let user = JSON.parse(localStorage.getItem('nn_user'));
+    let bookings = JSON.parse(localStorage.getItem('nn_bookings')) || [];
+    let reviews = JSON.parse(localStorage.getItem('nn_reviews')) || [];
 
-    if(!user) document.getElementById('reg-screen').classList.add('active');
-
-    function sendSignal(action, data) {
-        tg.sendData(JSON.stringify({ event: action, payload: data }));
-    }
-
-    function saveUser() {
-        const fn = document.getElementById('reg-fn').value;
-        const ph = document.getElementById('reg-ph').value;
-        if(fn && ph.length > 10) {
-            user = { fn, ph, id: tg.initDataUnsafe.user?.id };
-            localStorage.setItem('nn_v5_user', JSON.stringify(user));
-            document.getElementById('reg-screen').classList.remove('active');
-            sendSignal('registration', user);
-        }
-    }
+    if (tg.initDataUnsafe.user?.id === MY_ID) document.getElementById('admin-panel').style.display = 'block';
+    if (!user) document.getElementById('reg-screen').classList.add('active');
 
     function tab(id, el) {
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         el.classList.add('active');
-        if(id === 'sec-book') renderBookingState();
-        if(id === 'sec-admin') renderAdmin();
+        if(id === 'sec-admin' || id === 'sec-map') renderAdmin();
+        if(id === 'sec-book') renderBook();
     }
 
-    function renderBookingState() {
-        const myBook = bookings.find(b => b.user.ph === user.ph);
-        if(myBook && !editId) {
-            document.getElementById('my-booking-status').style.display = 'block';
-            document.getElementById('booking-ui').style.display = 'none';
-            document.getElementById('my-book-text').innerText = `Запись: ${myBook.day} марта, ${myBook.time}`;
+    function saveUser() {
+        const fn = document.getElementById('reg-fn').value;
+        const ln = document.getElementById('reg-ln').value;
+        const ph = document.getElementById('reg-ph').value;
+        if(fn && ph.length > 10) {
+            user = {fn, ln, ph};
+            localStorage.setItem('nn_user', JSON.stringify(user));
+            document.getElementById('reg-screen').classList.remove('active');
+            tg.sendData(JSON.stringify({event: 'registration', payload: user}));
+        }
+    }
+
+    function renderBook() {
+        const my = bookings.find(b => b.u === user.ph);
+        if(my) {
+            document.getElementById('status-card').style.display = 'block';
+            document.getElementById('booking-controls').style.display = 'none';
+            document.getElementById('status-info').innerText = `${my.day}.03 в ${my.time}`;
         } else {
-            document.getElementById('my-booking-status').style.display = 'none';
-            document.getElementById('booking-ui').style.display = 'block';
+            document.getElementById('status-card').style.display = 'none';
+            document.getElementById('booking-controls').style.display = 'block';
             renderCal();
         }
     }
 
     function renderCal() {
-        const c = document.getElementById('cal'); c.innerHTML = '';
+        const cal = document.getElementById('cal'); cal.innerHTML = '';
         for(let i=1; i<=31; i++) {
-            const d = document.createElement('div');
-            d.className = 'day' + (i === selectedDay ? ' selected' : '');
-            d.innerText = i;
-            d.onclick = () => { selectedDay = i; renderCal(); document.getElementById('time-box').style.display='block'; renderTimes(i); };
-            c.appendChild(d);
+            const d = document.createElement('div'); d.className = 'day'; d.innerText = i;
+            d.onclick = () => { showTimes(i); };
+            cal.appendChild(d);
         }
     }
 
-    function renderTimes(day) {
-        const tDiv = document.getElementById('times'); tDiv.innerHTML = '';
-        const slots = ["12:00","14:00","16:00","18:00"];
-        slots.forEach(t => {
-            const s = document.createElement('div');
-            s.className = 'time-slot' + (t === selectedTime ? ' selected' : '');
-            s.innerText = t;
-            s.onclick = () => { selectedTime = t; renderTimes(day); document.getElementById('confirm-btn').style.display='block'; };
-            tDiv.appendChild(s);
+    function showTimes(day) {
+        document.getElementById('time-selector').style.display = 'block';
+        const list = document.getElementById('times-list'); list.innerHTML = '';
+        ['10:00', '13:00', '16:00', '19:00'].forEach(t => {
+            const btn = document.createElement('button'); btn.className = 'btn btn-main'; btn.innerText = t;
+            btn.onclick = () => {
+                const b = {day, time: t, u: user.ph, fn: user.fn, ln: user.ln, ph: user.ph};
+                bookings.push(b);
+                localStorage.setItem('nn_bookings', JSON.stringify(bookings));
+                tg.sendData(JSON.stringify({event: 'new_booking', payload: b}));
+                document.getElementById('success-text').innerText = `${day} марта в ${t}`;
+                document.getElementById('success-overlay').style.display = 'flex';
+                renderBook();
+            };
+            list.appendChild(btn);
         });
     }
 
-    function confirmBooking() {
-        if(editId) {
-            const idx = bookings.findIndex(b => b.id === editId);
-            bookings[idx].day = selectedDay; bookings[idx].time = selectedTime;
-            sendSignal('edit_booking', bookings[idx]);
-            editId = null;
-        } else {
-            const b = { id: Date.now().toString(), day: selectedDay, time: selectedTime, user };
-            bookings.push(b);
-            sendSignal('new_booking', b);
-        }
-        localStorage.setItem('nn_v5_books', JSON.stringify(bookings));
-        renderBookingState();
+    function cancelBook() {
+        const my = bookings.find(b => b.u === user.ph);
+        tg.sendData(JSON.stringify({event: 'cancel_booking', payload: my}));
+        bookings = bookings.filter(b => b.u !== user.ph);
+        localStorage.setItem('nn_bookings', JSON.stringify(bookings));
+        renderBook();
     }
 
-    function startEdit() { editId = bookings.find(b => b.user.ph === user.ph)?.id; renderBookingState(); }
-
-    function cancelBooking() {
-        const b = bookings.find(x => x.id === (editId || bookings.find(b => b.user.ph === user.ph)?.id));
-        if(confirm("Отменить?")) {
-            sendSignal('cancel_booking', b);
-            bookings = bookings.filter(x => x.id !== b.id);
-            localStorage.setItem('nn_v5_books', JSON.stringify(bookings));
-            renderBookingState();
-        }
-    }
-
-    function postReview() {
-        const txt = document.getElementById('rev-text').value;
-        if(!txt) return;
-        const r = { user, text: txt };
+    function sendReview() {
+        const r = {fn: user.fn, stars: document.getElementById('rev-stars').value, text: document.getElementById('rev-text').value};
         reviews.unshift(r);
-        localStorage.setItem('nn_v5_revs', JSON.stringify(reviews));
-        sendSignal('new_review', r);
+        localStorage.setItem('nn_reviews', JSON.stringify(reviews));
+        tg.sendData(JSON.stringify({event: 'new_review', payload: r}));
         renderRevs();
     }
 
     function renderRevs() {
-        document.getElementById('list-reviews').innerHTML = reviews.map(r => `<div class="glass"><b>${r.user.fn}</b>: ${r.text}</div>`).join('');
-    }
-
-    function checkAdm() {
-        if(document.getElementById('adm-pass').value === '7777' || ADMIN_IDS.includes(tg.initDataUnsafe.user?.id)) {
-            document.getElementById('adm-login').style.display = 'none';
-            document.getElementById('adm-panel').style.display = 'block';
-        }
+        const box = document.getElementById('all-reviews'); box.innerHTML = '';
+        reviews.forEach(r => {
+            box.innerHTML += `<div class="glass"><b>${r.fn}</b> (${r.stars}/5)<p>${r.text}</p></div>`;
+        });
     }
 
     function renderAdmin() {
-        document.getElementById('adm-books-list').innerHTML = bookings.map(b => `<div class="glass">${b.day}.03 | ${b.time} - ${b.user.fn}</div>`).join('');
+        const adm = document.getElementById('admin-data');
+        if(!adm) return;
+        adm.innerHTML = bookings.length ? "" : "Записей пока нет";
+        bookings.forEach(b => {
+            adm.innerHTML += `<div class="glass" style="font-size:12px">📅 ${b.day}.03 | ⏰ ${b.time}<br>👤 ${b.fn} ${b.ln}<br>📞 <a href="tel:${b.u}" style="color:var(--accent)">${b.u}</a></div>`;
+        });
     }
+
+    renderRevs();
 </script>
 </body>
 </html>
