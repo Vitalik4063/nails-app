@@ -7,191 +7,185 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --accent: #ffafbd; --bg: #000; --glass: rgba(20, 20, 20, 0.98); --gradient: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%); }
+        :root { --accent: #ffafbd; --bg: #000; --glass: rgba(30, 30, 30, 0.95); --gradient: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%); }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; padding-bottom: 85px; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; padding-bottom: 80px; }
         .container { padding: 15px; max-width: 500px; margin: auto; }
-        .glass { background: var(--glass); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 18px; margin-bottom: 15px; }
+        .glass { background: var(--glass); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 18px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
         
-        /* ПРАЙС-ЛИСТ СТИЛИ */
-        .price-item { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; font-size: 14px; }
-        .price-name { flex: 1; padding-right: 10px; opacity: 0.9; }
-        .price-dots { flex: 1; border-bottom: 1px dashed #444; margin: 0 5px; position: relative; top: -4px; }
-        .price-val { font-weight: bold; color: var(--accent); white-space: nowrap; }
-        .price-category { border-bottom: 1px solid var(--accent); display: inline-block; margin-bottom: 12px; padding-bottom: 2px; text-transform: uppercase; letter-spacing: 1px; }
-
         /* КНОПКИ */
-        .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-bottom: 10px; font-size: 13px; text-decoration: none; text-align: center; display: block; color: #000; }
+        .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 13px; text-decoration: none; text-align: center; display: block; color: #000; margin-bottom: 10px; }
         .btn-main { background: var(--gradient); }
+        .btn-admin { background: #333; color: #fff; border: 1px solid #555; }
 
         /* НАВИГАЦИЯ */
         .nav { position: fixed; bottom: 12px; left: 4%; width: 92%; height: 65px; background: #111; border-radius: 20px; display: flex; justify-content: space-around; align-items: center; border: 1px solid #333; z-index: 1000; }
-        .nav-item { color: #555; text-align: center; font-size: 9px; flex: 1; transition: 0.3s; }
+        .nav-item { color: #555; text-align: center; font-size: 10px; flex: 1; }
         .nav-item.active { color: var(--accent); }
         .nav-item i { font-size: 20px; display: block; margin-bottom: 4px; }
 
-        .section { display: none; }
-        .section.active { display: block; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* ПРАЙС */
+        .price-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; border-bottom: 1px dashed #333; padding-bottom: 4px; }
+        .price-val { color: var(--accent); font-weight: bold; }
 
-        input, select, textarea { width: 100%; padding: 12px; background: #111; border: 1px solid #333; border-radius: 10px; color: #fff; margin-bottom: 10px; font-family: inherit; }
-        
-        #reg-screen { position: fixed; inset: 0; background: #000; z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px; }
-        #reg-screen.active { display: flex; }
+        .section { display: none; }
+        .section.active { display: block; animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        input, select { width: 100%; padding: 12px; background: #1a1a1a; border: 1px solid #333; border-radius: 10px; color: #fff; margin-bottom: 12px; }
     </style>
 </head>
 <body>
 
-<div id="reg-screen">
-    <div class="glass" style="width: 100%; text-align: center;">
-        <h2 style="color:var(--accent)">РЕГИСТРАЦИЯ</h2>
+<div id="reg-screen" style="position:fixed; inset:0; background:#000; z-index:9999; display:none; align-items:center; justify-content:center; padding:20px;">
+    <div class="glass" style="width:100%; text-align:center;">
+        <h2 style="color:var(--accent)"> Nastasia_Nailss</h2>
         <input id="reg-fn" placeholder="Имя">
-        <input id="reg-ln" placeholder="Фамилия">
         <input id="reg-ph" type="tel" value="+7">
-        <button class="btn btn-main" onclick="saveUser()">ОТКРЫТЬ ПРАЙС</button>
+        <button class="btn btn-main" onclick="saveUser()">ВОЙТИ</button>
     </div>
 </div>
 
 <div class="container">
-    
     <div id="sec-price" class="section active">
-        <h3 style="text-align: center;">PRICE LIST</h3>
-        
+        <h3 style="text-align:center">УСЛУГИ И ЦЕНЫ</h3>
         <div class="glass">
-            <h4 class="price-category">Маникюр</h4>
-            <div class="price-item"><span class="price-name">Гигиенический маникюр</span><div class="price-dots"></div><span class="price-val">750₽</span></div>
-            <div class="price-item"><span class="price-name">Маникюр с покрытием</span><div class="price-dots"></div><span class="price-val">1200₽</span></div>
-            <div class="price-item"><span class="price-name">Коррекция моей работы</span><div class="price-dots"></div><span class="price-val">1300₽</span></div>
-            <div class="price-item"><span class="price-name">Коррекция другого мастера</span><div class="price-dots"></div><span class="price-val">1400₽</span></div>
+            <div class="price-row"><span>Маникюр с покрытием</span><span class="price-val">1200₽</span></div>
+            <div class="price-row"><span>Наращивание до (3)</span><span class="price-val">1600₽</span></div>
+            <div class="price-row"><span>Коррекция</span><span class="price-val">1300₽</span></div>
+            <div class="price-row"><span>Сложный дизайн</span><span class="price-val">300₽</span></div>
         </div>
-
-        <div class="glass">
-            <h4 class="price-category">Наращивание</h4>
-            <div class="price-item"><span class="price-name">До длины 3</span><div class="price-dots"></div><span class="price-val">1600₽</span></div>
-            <div class="price-item"><span class="price-name">От длины 4</span><div class="price-dots"></div><span class="price-val">1900₽</span></div>
-        </div>
-
-        <div class="glass">
-            <h4 class="price-category">Дизайн</h4>
-            <div class="price-item"><span class="price-name">Сложные / Ручная роспись</span><div class="price-dots"></div><span class="price-val">200-300₽</span></div>
-            <div class="price-item"><span class="price-name">Простые (наклейки, стразы)</span><div class="price-dots"></div><span class="price-val">100-200₽</span></div>
-        </div>
-
-        <div class="glass">
-            <h4 class="price-category">Дополнительно</h4>
-            <div class="price-item"><span class="price-name">Коррекция от длины (4)</span><div class="price-dots"></div><span class="price-val">+200₽</span></div>
-            <div class="price-item"><span class="price-name">Ремонт / Наращивание (от 3 ногтей)</span><div class="price-dots"></div><span class="price-val">+150₽</span></div>
-            <div class="price-item"><span class="price-name">Снятие без покрытия</span><div class="price-dots"></div><span class="price-val">450₽</span></div>
-        </div>
+        <button class="btn btn-main" onclick="tab('sec-book', document.querySelectorAll('.nav-item')[2])">ЗАПИСАТЬСЯ</button>
     </div>
 
     <div id="sec-port" class="section">
-        <h3>ПОРТФОЛИО</h3>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <h3>МОИ РАБОТЫ</h3>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
             <img src="https://i.pinimg.com/564x/2b/43/8c/2b438c7f938f4625b16960f8544d6a89.jpg" style="width:100%; height:150px; object-fit:cover; border-radius:15px;">
             <img src="https://i.pinimg.com/564x/8a/05/23/8a052326b8401f80290885e334693994.jpg" style="width:100%; height:150px; object-fit:cover; border-radius:15px;">
-            <img src="https://i.pinimg.com/564x/4f/2e/0f/4f2e0f4989e2402b85558450f384f509.jpg" style="width:100%; height:150px; object-fit:cover; border-radius:15px;">
-            <img src="https://i.pinimg.com/564x/78/33/8d/78338d16790757262102146313837941.jpg" style="width:100%; height:150px; object-fit:cover; border-radius:15px;">
         </div>
-        <div class="glass" style="margin-top:15px; text-align: center;">
-            <h4 style="margin-top:0">МЫ В СОЦСЕТЯХ</h4>
-            <a href="https://t.me/nailsnastasiakireeva" class="btn" style="background:#229ED9; color:white;">TELEGRAM</a>
-            <a href="https://vk.com/nastasia_nails0" class="btn" style="background:#4C75A3; color:white;">ВКОНТАКТЕ</a>
+        <div class="glass" style="margin-top:15px">
+            <h4>СОЦСЕТИ</h4>
+            <a href="https://t.me/nailsnastasiakireeva" class="btn btn-admin">TELEGRAM</a>
+            <a href="https://vk.com/nastasia_nails0" class="btn btn-admin">ВКОНТАКТЕ</a>
         </div>
     </div>
 
     <div id="sec-book" class="section">
         <div class="glass">
-            <h4>ЗАПИСЬ ОНЛАЙН</h4>
-            <select id="book-month">
-                <option value="Марта">Март</option>
-                <option value="Апреля">Апрель</option>
-            </select>
+            <h4>ВЫБОР ВРЕМЕНИ</h4>
+            <select id="book-month"><option>Март</option><option>Апрель</option></select>
             <input type="number" id="book-day" placeholder="Число">
-            <div id="time-grid" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:8px;"></div>
-            <button class="btn btn-main" style="margin-top:15px" onclick="confirmBook()">ЗАПИСАТЬСЯ</button>
+            <div id="time-grid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px"></div>
+            <button class="btn btn-main" style="margin-top:15px" onclick="confirmBook()">ПОДТВЕРДИТЬ</button>
         </div>
     </div>
 
     <div id="sec-admin" class="section">
         <div id="adm-auth" class="glass">
-            <h4>ВХОД</h4>
+            <h4>ВХОД МАСТЕРА</h4>
             <input type="password" id="adm-pass" placeholder="Пароль">
             <button class="btn btn-main" onclick="checkPass()">ВОЙТИ</button>
         </div>
         <div id="adm-panel" style="display:none">
-            <div id="adm-bookings"></div>
+            <div class="glass" id="adm-stats">
+                <h4>БАЗА ДАННЫХ</h4>
+                <p id="stat-count"></p>
+                <button class="btn btn-admin" onclick="exportData()">СКАЧАТЬ JSON</button>
+            </div>
+            <div id="adm-list"></div>
         </div>
     </div>
 </div>
 
 <nav class="nav">
-    <div class="nav-item active" onclick="tab('sec-price', this)"><i class="fa-solid fa-list-ul"></i>Прайс</div>
-    <div class="nav-item" onclick="tab('sec-port', this)"><i class="fa-solid fa-images"></i>Работы</div>
-    <div class="nav-item" onclick="tab('sec-book', this)"><i class="fa-solid fa-calendar-check"></i>Запись</div>
+    <div class="nav-item active" onclick="tab('sec-price', this)"><i class="fa-solid fa-tags"></i>Прайс</div>
+    <div class="nav-item" onclick="tab('sec-port', this)"><i class="fa-solid fa-heart"></i>Работы</div>
+    <div class="nav-item" onclick="tab('sec-book', this)"><i class="fa-solid fa-clock"></i>Запись</div>
     <div class="nav-item" onclick="tab('sec-admin', this)"><i class="fa-solid fa-lock"></i>Админ</div>
 </nav>
 
 <script>
     const tg = window.Telegram.WebApp;
-    let user = JSON.parse(localStorage.getItem('nn_u_v9'));
-    let bookings = JSON.parse(localStorage.getItem('nn_b_v9')) || [];
+    tg.expand();
+
+    let user = JSON.parse(localStorage.getItem('nn_u'));
+    let bookings = JSON.parse(localStorage.getItem('nn_b')) || [];
     let selTime = null;
 
-    if(!user) document.getElementById('reg-screen').classList.add('active');
+    if(!user) document.getElementById('reg-screen').style.display = 'flex';
 
     function tab(id, el) {
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         el.classList.add('active');
+        if(id === 'sec-admin' && document.getElementById('adm-panel').style.display === 'block') renderAdmin();
     }
 
     function saveUser() {
         const fn = document.getElementById('reg-fn').value, ph = document.getElementById('reg-ph').value;
         if(fn && ph.length > 10) {
-            user = {fn, ln: document.getElementById('reg-ln').value, ph};
-            localStorage.setItem('nn_u_v9', JSON.stringify(user));
-            document.getElementById('reg-screen').classList.remove('active');
+            user = {fn, ph};
+            localStorage.setItem('nn_u', JSON.stringify(user));
+            document.getElementById('reg-screen').style.display = 'none';
+            tg.sendData(JSON.stringify({event: 'registration', payload: user}));
         }
     }
 
-    // Сетка времени
+    // Сетка времени 12:00 - 19:00
     const grid = document.getElementById('time-grid');
     for(let h=12; h<=18; h++) {
         ['00','30'].forEach(m => {
-            const t = `${h}:${m}`;
-            const div = document.createElement('div');
-            div.className = 'time-slot';
-            div.style = "padding:10px; background:#1a1a1a; border-radius:8px; text-align:center; font-size:12px; border:1px solid #333";
-            div.innerText = t;
-            div.onclick = () => {
-                document.querySelectorAll('.time-slot').forEach(s => s.style.background = '#1a1a1a');
-                div.style.background = 'var(--accent)';
-                div.style.color = '#000';
+            const t = h + ':' + m;
+            const d = document.createElement('div');
+            d.className = 'time-slot';
+            d.style = "padding:10px; background:#222; border-radius:10px; text-align:center; font-size:12px; cursor:pointer";
+            d.innerText = t;
+            d.onclick = () => {
+                document.querySelectorAll('.time-slot').forEach(s => s.style.background = '#222');
+                d.style.background = 'var(--accent)';
                 selTime = t;
             };
-            grid.appendChild(div);
+            grid.appendChild(d);
         });
     }
 
     function confirmBook() {
-        const d = document.getElementById('book-day').value, m = document.getElementById('book-month').value;
-        if(!d || !selTime) return alert("Выбери дату!");
-        const b = { id: Date.now(), day: d, month: m, time: selTime, u: user.ph, fn: user.fn, ln: user.ln };
+        const d = document.getElementById('book-day').value;
+        if(!d || !selTime) return alert("Заполни дату и время!");
+        const b = { id: Date.now(), day: d, month: document.getElementById('book-month').value, time: selTime, fn: user.fn, ph: user.ph };
         bookings.push(b);
-        localStorage.setItem('nn_b_v9', JSON.stringify(bookings));
+        localStorage.setItem('nn_b', JSON.stringify(bookings));
         tg.sendData(JSON.stringify({event: 'new_booking', payload: b}));
-        alert("Успешно!");
+        alert("Запись сохранена!");
     }
 
     function checkPass() {
         if(document.getElementById('adm-pass').value === '7777') {
-            document.getElementById('adm-auth').style.display='none';
-            document.getElementById('adm-panel').style.display='block';
-            const box = document.getElementById('adm-bookings');
-            box.innerHTML = bookings.map(b => `<div class="glass">${b.day} ${b.month} - ${b.time}<br>${b.fn} ${b.ph}</div>`).join('');
+            document.getElementById('adm-auth').style.display = 'none';
+            document.getElementById('adm-panel').style.display = 'block';
+            renderAdmin();
         }
+    }
+
+    function renderAdmin() {
+        const list = document.getElementById('adm-list');
+        list.innerHTML = '<h4>СПИСОК ЗАПИСЕЙ:</h4>';
+        bookings.forEach(b => {
+            list.innerHTML += `<div class="glass" style="font-size:13px">${b.day} ${b.month} - ${b.time} | ${b.fn}</div>`;
+        });
+        document.getElementById('stat-count').innerText = `Всего записей в памяти: ${bookings.length}`;
+    }
+
+    function exportData() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(bookings));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", "nails_database.json");
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
     }
 </script>
 </body>
